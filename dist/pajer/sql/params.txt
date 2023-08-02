@@ -1,0 +1,5 @@
+dbLogin="rcp"
+dbPassword="PDArcpSERWIS"
+dbHost="p.pdaserwis.pl"
+dbDatabase="RFID"
+dbPort="3306"

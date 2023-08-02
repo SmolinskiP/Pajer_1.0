@@ -1,0 +1,52 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>daaf3d9f-b152-47c0-b56b-dcb5ced91625</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>Pajer.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Pajer</Name>
+    <RootNamespace>Pajer</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="fnct\getpath.py" />
+    <Compile Include="fnct\iseven.py" />
+    <Compile Include="fnct\free_days.py" />
+    <Compile Include="fnct\check_time.py" />
+    <Compile Include="login_form\login_form.py" />
+    <Compile Include="Pajer.py" />
+    <Compile Include="sql\db_connect.py" />
+    <Compile Include="sql\db_data_functions.py" />
+    <Compile Include="windows\rm_entry.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="login_form\" />
+    <Folder Include="fnct\" />
+    <Folder Include="windows\" />
+    <Folder Include="sql\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sql\params.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
