@@ -10,6 +10,8 @@ from PIL import Image, ImageTk
 current_directory = Get_Local_Path()
 global rights_dict
 rights_dict = {}
+global version
+version = '1.0.0'
 
 def refresh(self):
     self.destroy()
@@ -80,7 +82,7 @@ def login():
 def login_form():
     global login_screen
     try:
-        print(uname)
+        tmpvariable07 = uname
     except:
         login_screen = Toplevel()
         login_screen.resizable(False, False)
@@ -123,5 +125,5 @@ def login_form():
 
 main_window = Tk()
 main_window.iconbitmap(current_directory + "\img\\favicon.ico")
-main_window.title("PaJer v0.9.92 - najlepszy program Rejestracji Czasu Pracy we wszechświecie")
+main_window.title("PaJer v%s - najlepszy program Rejestracji Czasu Pracy we wszechświecie" % version)
 main_window.state('zoomed')

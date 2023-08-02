@@ -10,22 +10,34 @@ from datetime import date, datetime
 
 #import local modules
 from login_form.login_form import *
-from sql.db_data_functions import Create_Dict, Create_Emp_Dict, SQL_Connect, Get_Emp_Occurance, Get_Emp_List, Activate_Employee
-from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_EntryExit, Add_Holiday, Add_Random_Entry, Change_Connection_Params, Edit_Employee, Remove_Employee, Changelog, Update_App, Add_Comment
+from sql.db_data_functions import Create_Dict, Create_Emp_Dict, SQL_Connect, Get_Emp_Occurance, Get_Emp_List, Activate_Employee, Get_Emps_By_Department, Get_Emps_Overtime, Get_Emps_By_Id, Get_Emps_Overtime_Single
+from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_EntryExit, Add_Holiday, Add_Random_Entry, Change_Connection_Params, Edit_Employee, Remove_Employee, Changelog, Update_App, Add_Comment, Add_Employee, ToDo, Edit_Employee_Overtime, Month_to_String
 from fnct.iseven import isEven
 from sql.db_connect import *
 
-version = '0.9.92'
+def intversion(version, update_version):
+    int_version = int(version[0] + version[2] + version[4:])
+    int_update_version = int(update_version[0] + update_version[2] + update_version[4:])
+    if int_version < int_update_version:
+        return True
+    else:
+        return False
+
 try:
     r = requests.get('https://p.pdaserwis.pl/pliki/update/version.txt', allow_redirects=True) #Get version
     update_version = str(r.content)[2:-1]
 except:
-    update_version = "666"
+    update_version = "0.0.1"
 
 login_form()
 #RUN MAINLOOP
 try:
-    print(uname)
+    tmpvariable09 = uname
+    print("")
+    print("==============================================================================")
+    print("PaJer v%s - najlepszy program Rejestracji Czasu Pracy we wszechświecie" % version)
+    print("Zalogowany użytkownik - %s" % uname)
+    print("==============================================================================")
 except:
     main_window.withdraw()
     main_window.mainloop()
@@ -200,6 +212,286 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
         middle_screen.update()
         middle_screen_panel.update()
         middle_screen.config(scrollregion=middle_screen.bbox("all"))
+
+def Create_Table_Overtime_Emp(emp_id):
+    
+    Clear(middle_screen_panel)
+    fgfont=('Arial', 10, 'bold')
+    print(emp_id)
+
+    i = 1
+    dict_firma = {}
+    dict_firma["frame0"] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+    dict_firma["frame0"].pack(anchor=NW, fill=X)
+    e_lp = ttk.Entry(dict_firma["frame0"], width=4)
+    e_lp.pack(side=LEFT)
+    e_lp.insert(END, "LP")
+    e_lp.config(state='disabled', justify='center', font=fgfont)
+    e_id = ttk.Entry(dict_firma["frame0"], width=4)
+    e_id.pack(side=LEFT)
+    e_id.insert(END, "ID")
+    e_id.config(state='disabled', justify='center', font=fgfont)
+    e_fn = ttk.Entry(dict_firma["frame0"], width=13)
+    e_fn.pack(side=LEFT)
+    e_fn.insert(END, "Imię")
+    e_fn.config(state='disabled', justify='center', font=fgfont)
+    e_ln = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ln.pack(side=LEFT)
+    e_ln.insert(END, "Nazwisko")
+    e_ln.config(state='disabled', justify='center', font=fgfont)
+    e_tm = ttk.Entry(dict_firma["frame0"], width=20)
+    e_tm.pack(side=LEFT)
+    e_tm.insert(END, "Dział")
+    e_tm.config(state='disabled', justify='center', font=fgfont)
+    e_ed = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ed.pack(side=LEFT)
+    e_ed.insert(END, "Karta")
+    e_ed.config(state='disabled', justify='center', font=fgfont)
+    e_et = ttk.Entry(dict_firma["frame0"], width=30)
+    e_et.pack(side=LEFT)
+    e_et.insert(END, "Stanowisko")
+    e_et.config(state='disabled', justify='center', font=fgfont)
+    e_hr = ttk.Entry(dict_firma["frame0"], width=12)
+    e_hr.pack(side=LEFT)
+    e_hr.insert(END, "Nadgodziny")
+    e_hr.config(state='disabled', justify='center', font=fgfont)
+    e_yr = ttk.Entry(dict_firma["frame0"], width=7)
+    e_yr.pack(side=LEFT)
+    e_yr.insert(END, "Rok")
+    e_yr.config(state='disabled', justify='center', font=fgfont)
+    e_mn = ttk.Entry(dict_firma["frame0"], width=11)
+    e_mn.pack(side=LEFT)
+    e_mn.insert(END, "Miesiąc")
+    e_mn.config(state='disabled', justify='center', font=fgfont)
+
+    emp_list = Get_Emps_By_Id(emp_id)
+    emp_list = Get_Emps_Overtime_Single(emp_list)
+
+    for event in emp_list:
+        if isEven(i) == True:
+            fgcolor = 'blue'
+        else:
+            fgcolor = 'darkblue'
+        key = str("frame" + str(i))
+        dict_firma[key] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+        dict_firma[key].pack(anchor=N, fill=X)
+        e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+        e.pack(side=LEFT)
+        e.insert(END, str(i))
+        e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+        for j in range(len(event)):
+            if j == 0:
+                key = "emp_id" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 1:
+                key = "emp_fname" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 2:
+                key = "emp_lname" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 3:
+                key = "emp_department" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=20)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 4:
+                key = "emp_card" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j-1])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 5:
+                key = "emp_pos" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j-1])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=30)
+                e.pack(side=LEFT)
+                e.insert(END, pos_dict[int(dict_firma[key].get())])
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+                key = "emp_over" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                print(event)
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=12)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 6:
+                key = "over_id" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+            elif j == 8:
+                key = "ent_year" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=7)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get()[:4])
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+                key = "ent_month" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=11)
+                e.pack(side=LEFT)
+                e.insert(END, Month_to_String(dict_firma[key].get()[5:7]))
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+
+                edit_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Edytuj", command=lambda emp_id = dict_firma["emp_id" + str(i)].get(), ent_id = dict_firma["over_id" + str(i)].get(), rights_dict=rights_dict: Edit_Employee_Overtime(emp_id, ent_id, rights_dict))
+                edit_btn.pack(side=LEFT)
+        i+=1
+    middle_screen.coords(middle_screen_id, middle_screen.winfo_width()/2, 0)
+    main_window.update()
+    middle_screen.update()
+    middle_screen_panel.update()
+    middle_screen.config(scrollregion=middle_screen.bbox("all"))
+
+def Create_Table_Overtime_Dep(department):
+    
+    Clear(middle_screen_panel)
+    fgfont=('Arial', 10, 'bold')
+    print(department)
+
+    i = 1
+    dict_firma = {}
+    dict_firma["frame0"] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+    dict_firma["frame0"].pack(anchor=NW, fill=X)
+    e_lp = ttk.Entry(dict_firma["frame0"], width=4)
+    e_lp.pack(side=LEFT)
+    e_lp.insert(END, "LP")
+    e_lp.config(state='disabled', justify='center', font=fgfont)
+    e_id = ttk.Entry(dict_firma["frame0"], width=4)
+    e_id.pack(side=LEFT)
+    e_id.insert(END, "ID")
+    e_id.config(state='disabled', justify='center', font=fgfont)
+    e_fn = ttk.Entry(dict_firma["frame0"], width=13)
+    e_fn.pack(side=LEFT)
+    e_fn.insert(END, "Imię")
+    e_fn.config(state='disabled', justify='center', font=fgfont)
+    e_ln = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ln.pack(side=LEFT)
+    e_ln.insert(END, "Nazwisko")
+    e_ln.config(state='disabled', justify='center', font=fgfont)
+    e_tm = ttk.Entry(dict_firma["frame0"], width=20)
+    e_tm.pack(side=LEFT)
+    e_tm.insert(END, "Dział")
+    e_tm.config(state='disabled', justify='center', font=fgfont)
+    e_ed = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ed.pack(side=LEFT)
+    e_ed.insert(END, "Karta")
+    e_ed.config(state='disabled', justify='center', font=fgfont)
+    e_et = ttk.Entry(dict_firma["frame0"], width=30)
+    e_et.pack(side=LEFT)
+    e_et.insert(END, "Stanowisko")
+    e_et.config(state='disabled', justify='center', font=fgfont)
+    e_hr = ttk.Entry(dict_firma["frame0"], width=12)
+    e_hr.pack(side=LEFT)
+    e_hr.insert(END, "Nadgodziny")
+    e_hr.config(state='disabled', justify='center', font=fgfont)
+
+    emp_list = Get_Emps_By_Department(department, uname)
+    emp_list = Get_Emps_Overtime(emp_list)
+
+    for event in emp_list:
+        if isEven(i) == True:
+            fgcolor = 'blue'
+        else:
+            fgcolor = 'darkblue'
+        key = str("frame" + str(i))
+        dict_firma[key] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+        dict_firma[key].pack(anchor=N, fill=X)
+        e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+        e.pack(side=LEFT)
+        e.insert(END, str(i))
+        e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+        for j in range(len(event)):
+            if j == 0:
+                key = "emp_id" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 1:
+                key = "emp_fname" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 2:
+                key = "emp_lname" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 3:
+                key = "emp_department" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j+4])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=20)
+                e.pack(side=LEFT)
+                e.insert(END, dep_dict[event[j+4]])
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 4:
+                key = "emp_card" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j-1])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 5:
+                key = "emp_pos" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j-1])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=30)
+                e.pack(side=LEFT)
+                e.insert(END, pos_dict[int(dict_firma[key].get())])
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+                key = "emp_over" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=12)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 6:
+                key = "over_id" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+
+                edit_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Edytuj", command=lambda emp_id = dict_firma["emp_id" + str(i)].get(), ent_id = dict_firma["over_id" + str(i)].get(), rights_dict=rights_dict: Edit_Employee_Overtime(emp_id, ent_id, rights_dict))
+                edit_btn.pack(side=LEFT)
+        i+=1
+    middle_screen.coords(middle_screen_id, middle_screen.winfo_width()/2, 0)
+    main_window.update()
+    middle_screen.update()
+    middle_screen_panel.update()
+    middle_screen.config(scrollregion=middle_screen.bbox("all"))
 
 def Create_Table_Employees(department, rights_dict):
 
@@ -489,7 +781,7 @@ try:
     act_button = ttk.Button(right_panel, text='Aktualizuj\nobecność', command=lambda: Create_Table_Presence(selected_emp_id.get(), selected_emp_fname.get(), selected_emp_lname.get(), Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
     act_button.pack(side=TOP, fill=BOTH, expan=False, pady=5)
 
-    if version != update_version:
+    if intversion(version, update_version) == True:
         s = ttk.Style()
         s.configure('my.TButton', font=('Arial', 16, 'bold'), focusthickness=10, focuscolor='red', background='chartreuse4')
         s.map('my.TButton', background=[('active', '#ff0000')])
@@ -525,7 +817,7 @@ def Create_Menu():
     menubar.add_cascade(label="Opcje", menu=opt_menu)
 
     emp_menu = Menu(menubar, tearoff=0)
-    emp_menu.add_command(label="Dodaj pracownika", command=donothing)
+    emp_menu.add_command(label="Dodaj pracownika", command=lambda: Add_Employee(uname))
     emp_menu.add_command(label="Lista nieaktywnych", command=lambda department=2468642, rights_dict=rights_dict: Create_Table_Employees(department, rights_dict))
     dep_menu = Menu(emp_menu, tearoff=0)
     for item in rights_dict['departments']:
@@ -533,26 +825,42 @@ def Create_Menu():
     emp_menu.add_cascade(label="Lista pracowników", menu=dep_menu)
     menubar.add_cascade(label="Pracownicy", menu=emp_menu)
 
-    pres_menu = Menu(menubar, tearoff=0)
-    empl_menu = Menu(pres_menu, tearoff=0)
+    empl_menu = Menu(emp_menu, tearoff=0)
     for item in rights_dict['departments']:
         new_menu = Menu(empl_menu, tearoff=0)
         empl_menu.add_cascade(label=dep_dict[int(item)], menu=new_menu)
         for x in emp_dict[int(item)]:
             new_menu.add_command(label=(x[1] + " " + x[2]), command=lambda emp_id=x[0], emp_fname=x[1], emp_lname=x[2], date_from=Get_Date_From_Callendar(cal_from), date_to=Get_Date_From_Callendar(cal_to): Create_Table_Presence(emp_id, emp_fname, emp_lname, date_from, date_to))
-    add_menu = Menu(pres_menu, tearoff=0)
-    add_menu.add_command(label="Dodaj przerwę", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname:Add_Break(selected_emp, emp_id.get(), unam))
-    add_menu.add_command(label="Dodaj wejście/wyjście", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_EntryExit(selected_emp, emp_id.get(), unam, Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
-    add_menu.add_command(label="Dodaj urlop", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_Holiday(selected_emp, emp_id.get(), unam, Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
-    add_menu.add_command(label="Dodaj komentarz", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, uname=uname: Add_Comment(selected_emp, emp_id, uname))
-    add_menu.add_command(label="Dodaj inny wpis", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_Random_Entry(selected_emp, emp_id.get(), unam))
-    pres_menu.add_cascade(label="Dodaj wpis", menu=add_menu)
-    pres_menu.add_cascade(label="Lista obecności", menu=empl_menu)
-    menubar.add_cascade(label="Obecnośc", menu=pres_menu)
+    emp_menu.add_cascade(label="Lista obecności", menu=empl_menu)
+
+    pres_menu = Menu(menubar, tearoff=0)
+    pres_menu.add_command(label="Dodaj przerwę", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname:Add_Break(selected_emp, emp_id.get(), unam))
+    pres_menu.add_command(label="Dodaj wejście/wyjście", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_EntryExit(selected_emp, emp_id.get(), unam, Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
+    pres_menu.add_command(label="Dodaj urlop", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_Holiday(selected_emp, emp_id.get(), unam, Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
+    pres_menu.add_command(label="Dodaj komentarz", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, uname=uname: Add_Comment(selected_emp, emp_id, uname))
+    pres_menu.add_command(label="Dodaj inny wpis", command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_Random_Entry(selected_emp, emp_id.get(), unam))
+    menubar.add_cascade(label="Wpisy", menu=pres_menu)
+
+    overtime_menu = Menu(menubar, tearoff=0)
+    ov_dep_menu = Menu(overtime_menu, tearoff=0)
+    for item in rights_dict['departments']:
+        ov_dep_menu.add_command(label=dep_dict[int(item)], command=lambda department=int(item): Create_Table_Overtime_Dep(department))
+    overtime_menu.add_cascade(label="Dział", menu=ov_dep_menu)
+    menubar.add_cascade(label="Nadgodziny", menu=overtime_menu)
+
+    ov_emp_menu = Menu(overtime_menu, tearoff=0)
+    for item in rights_dict['departments']:
+        new_menu = Menu(ov_emp_menu, tearoff=0)
+        ov_emp_menu.add_cascade(label=dep_dict[int(item)], menu=new_menu)
+        for x in emp_dict[int(item)]:
+            new_menu.add_command(label=(x[1] + " " + x[2]), command=lambda emp_id=x[0]:Create_Table_Overtime_Emp(emp_id))
+    overtime_menu.add_cascade(label="Pracownik", menu=ov_emp_menu)
+    overtime_menu.add_command(label="Wszyscy", command=lambda: Create_Table_Overtime_Dep(2468642))
+
 
     help_menu = Menu(menubar, tearoff=0)
     help_menu.add_command(label="Changelog", command=lambda: Changelog())
-    help_menu.add_command(label="About", command=donothing)
+    help_menu.add_command(label="About", command=lambda: ToDo())
     help_menu.add_separator()
     help_menu.add_command(label="Aktualizacje", command=lambda main_wnd=main_window, version=version, update_version=update_version: Update_App(main_wnd, version, update_version))
     menubar.add_cascade(label="Help", menu=help_menu)

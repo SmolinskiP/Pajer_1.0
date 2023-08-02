@@ -2,7 +2,7 @@
 from tkinter import messagebox
 import tkinter.ttk as ttk
 from tkinter.messagebox import askyesno
-from sql.db_data_functions import Delete_SQL, Add_Break_SQL, Get_Hash, Change_Password_SQL, Add_EntryExit_SQL, Add_Holiday_SQL, Create_Dict, Add_Random_Entry_SQL, Get_Single_Emp, Edit_Emp_Data, Get_Right, Delete_Emp_SQL, Add_Comment_SQL
+from sql.db_data_functions import Delete_SQL, Add_Break_SQL, Get_Hash, Change_Password_SQL, Add_EntryExit_SQL, Add_Holiday_SQL, Create_Dict, Add_Random_Entry_SQL, Get_Single_Emp, Edit_Emp_Data, Get_Right, Delete_Emp_SQL, Add_Comment_SQL, Add_Emp_SQL, Get_Name, Send_Overtime
 from tkinter import *
 import tkinter.ttk as ttk
 from fnct.getpath import Get_Local_Path
@@ -111,7 +111,7 @@ def Remove_Entry(entry_id, frame, uname):
         Delete_SQL("obecnosc", "id", entry_id)
         frame.destroy()
     else:
-        print("E tam")
+        print("Nie usuwam wpisu")
 
 def Add_Break(selected_emp, employee_id, uname):
     wnd = Toplevel()
@@ -159,7 +159,6 @@ def Add_Break(selected_emp, employee_id, uname):
     lbl_comment = ttk.Label(dwnframe, text="Dodaj komentarz (opcjonalnie)", font=("Arial", 11))
     add_comment = ttk.Entry(dwnframe, textvariable=comment)
 
-    print(uname)
     send_button = ttk.Button(dwnframe, text="Wyślij pracownika na przerwę", style='my.TButton', command=lambda wnd=wnd, emp_id=employee_id, unam=uname: Add_Break_SQL(emp_id, cal.get_date(), time_picker_fr.time(), time_picker_to.time(), unam, comment.get(), wnd))
 
     lbl_date.pack(pady=5)
@@ -190,7 +189,6 @@ def Change_Password(uname):
     wnd.attributes("-topmost", True)
 
     act_pass = Get_Hash(uname)
-    print(act_pass)
 
     old_pwd = StringVar()
     new_pwd = StringVar()
@@ -226,8 +224,6 @@ def Change_Password(uname):
     send_button.pack(side=TOP, padx=30, pady=20, ipadx=5, ipady=5)
 
 def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
-    print(date_from)
-    print(date_to)
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(current_directory + "\img\\favicon.ico")
@@ -288,7 +284,6 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     lbl_comment = ttk.Label(dwnframe, text="Dodaj komentarz (opcjonalnie)", font=("Arial", 11))
     add_comment = ttk.Entry(dwnframe, textvariable=comment)
 
-    print(uname)
     send_button = ttk.Button(dwnframe, text="Dodaj obecność", style='my.TButton', command=lambda wnd=wnd, emp_id=employee_id, unam=uname: Add_EntryExit_SQL(emp_id, cal_from.get_date(), cal_to.get_date(), time_picker_fr.time(), time_picker_to.time(), unam, comment.get(), wnd))
 
     
@@ -309,8 +304,6 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     the_choosen_one.pack(side=TOP, fill=BOTH, expan=False)
 
 def Add_Holiday(selected_emp, employee_id, uname, date_from, date_to):
-    print(date_from)
-    print(date_to)
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(current_directory + "\img\\favicon.ico")
@@ -372,7 +365,6 @@ def Add_Holiday(selected_emp, employee_id, uname, date_from, date_to):
     lbl_comment = ttk.Label(dwnframe, text="Dodaj komentarz (opcjonalnie)", font=("Arial", 11))
     add_comment = ttk.Entry(dwnframe, textvariable=comment)
 
-    print(uname)
     send_button = ttk.Button(dwnframe, text="Dodaj urlop", style='my.TButton', command=lambda wnd=wnd, emp_id=employee_id, unam=uname: Add_Holiday_SQL(emp_id, int(reversed_dictionary[holiday_type.get()]), cal_from.get_date(), cal_to.get_date(), unam, comment.get(), wnd))
 
     
@@ -438,7 +430,6 @@ def Add_Random_Entry(selected_emp, employee_id, uname):
     lbl_comment = ttk.Label(dwndwnframe, text="Dodaj komentarz (opcjonalnie)", font=("Arial", 11))
     add_comment = ttk.Entry(dwndwnframe, textvariable=comment)
 
-    print(uname)
     send_button = ttk.Button(dwndwnframe, text="Dodaj wpis", style='my.TButton', command=lambda wnd=wnd, emp_id=employee_id, unam=uname: Add_Random_Entry_SQL(emp_id, cal.get_date(), reversed_dictionary[holiday_type.get()], time_picker.time(), unam, comment.get(), wnd))
 
     lbl_date.pack(pady=5)
@@ -582,6 +573,135 @@ def Edit_Employee(emp_id, uname):
     send_button = ttk.Button(maindwnframe, text="Edytuj pracownika", style='my.TButton', command=lambda emp_id=emp_id, wnd=wnd: Edit_Emp_Data(emp_id, company_dict_rev[emp_company.get()], dep_dict_rev[emp_department.get()], city_dict_rev[emp_city.get()], tl_dict_rev[emp_tl.get()], agr_dict_rev[emp_agr.get()], pos_dict_rev[emp_pos.get()], smk_dict_rev[emp_smk.get()], entry_card.get(), wnd))
     send_button.pack(pady=30, ipady=10, ipadx=10)
 
+def Add_Employee(uname):
+    if Get_Right(uname, "add_emp") == False:
+        messagebox.showwarning("Ostrzeżenie", "Brak uprawnień do edycji pracowników\nSkontaktuj się z administratorem")
+        return
+    company_dict = Create_Dict("_firma", "firma")
+    company_dict_rev = dict(map(reversed, company_dict.items()))
+    company_list = []
+    for key in company_dict:
+        company_list.append(company_dict[key])
+    dep_dict = Create_Dict("_dzial", "dzial")
+    dep_dict_rev = dict(map(reversed, dep_dict.items()))
+    dep_list = []
+    for key in dep_dict:
+        dep_list.append(dep_dict[key])
+    city_dict = Create_Dict("_lokalizacja", "miasto")
+    city_dict_rev = dict(map(reversed, city_dict.items()))
+    city_list = []
+    for key in city_dict:
+        city_list.append(city_dict[key])
+    tl_dict = Create_Dict("_team", "teamleader")
+    tl_dict_rev = dict(map(reversed, tl_dict.items()))
+    tl_list = []
+    for key in tl_dict:
+        tl_list.append(tl_dict[key])
+    agr_dict = Create_Dict("_umowa", "rodzaj")
+    agr_dict_rev = dict(map(reversed, agr_dict.items()))
+    agr_list = []
+    for key in agr_dict:
+        agr_list.append(agr_dict[key])
+    pos_dict = Create_Dict("_stanowisko", "stanowisko")
+    pos_dict_rev = dict(map(reversed, pos_dict.items()))
+    pos_list = []
+    for key in pos_dict:
+        pos_list.append(pos_dict[key])
+    smk_dict = Create_Dict("_palacz", "stan")
+    smk_dict_rev = dict(map(reversed, smk_dict.items()))
+    smk_list = []
+    for key in smk_dict:
+        smk_list.append(smk_dict[key])
+
+    wnd = Toplevel()
+    wnd.resizable(False, False)
+    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.title("Dodaj pracownika")
+    wnd.lift()
+    wnd.attributes("-topmost", True)
+
+    maintopframe = Frame(wnd)
+    maindwnframe = Frame(wnd)
+    topleftframe = Frame(maintopframe)
+    toprightframe = Frame(maintopframe)
+
+    maintopframe.pack(side=TOP, expand=True, fill="both")
+    topleftframe.pack(side=LEFT, expand=True, fill="both")
+    toprightframe.pack(side=RIGHT, expand=True, fill="both")
+    maindwnframe.pack(side=TOP, expand=True, fill="both")
+
+    ttk.Label(topleftframe, text="Imię", font=("Arial", 13, 'bold')).pack(pady=15)
+    emp_fname = StringVar()
+    maintopframe.pack(side=TOP, expand=True, fill="both")
+    entry_top = ttk.Entry(topleftframe, textvariable=emp_fname)
+    entry_top.pack(side=TOP, padx=60, pady=10)
+    entry_top.config(justify='center', font=("Arial", 15, 'bold'))
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(toprightframe, text="Nazwisko", font=("Arial", 13, 'bold')).pack(pady=15)
+    emp_lname = StringVar()
+    maintopframe.pack(side=TOP, expand=True, fill="both")
+    entry_top = ttk.Entry(toprightframe, textvariable=emp_lname)
+    entry_top.pack(side=TOP, padx=60, pady=10)
+    entry_top.config(justify='center', font=("Arial", 15, 'bold'))
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+
+    s = ttk.Style()
+    s.configure('my.TButton', font=('Arial', 12, 'bold'), focusthickness=3, focuscolor='none')
+    s.configure("my.TMenubutton", font=('Arial', 12, 'bold'))
+
+    ttk.Label(topleftframe, text="Firma", font=("Arial", 13, 'bold')).pack()
+    emp_company = StringVar()
+    choose_cmp = ttk.OptionMenu(topleftframe, emp_company, company_list[0], *company_list, style='my.TMenubutton')
+    choose_cmp.pack(pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(toprightframe, text="Dział", font=("Arial", 13, 'bold')).pack()
+    emp_department = StringVar()
+    choose_dep = ttk.OptionMenu(toprightframe, emp_department, dep_list[4], *dep_list, style='my.TMenubutton')
+    choose_dep.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(topleftframe, text="Lokalizacja", font=("Arial", 13, 'bold')).pack()
+    emp_city = StringVar()
+    choose_city = ttk.OptionMenu(topleftframe, emp_city, city_list[0], *city_list, style='my.TMenubutton')
+    choose_city.pack(pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(toprightframe, text="Teamleader", font=("Arial", 13, 'bold')).pack()
+    emp_tl = StringVar()
+    choose_tl = ttk.OptionMenu(toprightframe, emp_tl, tl_list[4], *tl_list, style='my.TMenubutton')
+    choose_tl.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(topleftframe, text="Umowa", font=("Arial", 13, 'bold')).pack()
+    emp_agr = StringVar()
+    choose_agr = ttk.OptionMenu(topleftframe, emp_agr, agr_list[0], *agr_list, style='my.TMenubutton')
+    choose_agr.pack(pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(toprightframe, text="Stanowisko", font=("Arial", 13, 'bold')).pack()
+    emp_pos = StringVar()
+    choose_pos = ttk.OptionMenu(toprightframe, emp_pos, pos_list[34], *pos_list, style='my.TMenubutton')
+    choose_pos.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(topleftframe, text="Palacz", font=("Arial", 13, 'bold')).pack()
+    emp_smk = StringVar()
+    choose_smk = ttk.OptionMenu(topleftframe, emp_smk, smk_list[0], *smk_list, style='my.TMenubutton')
+    choose_smk.pack(pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+
+    ttk.Label(toprightframe, text="Karta RFID", font=("Arial", 13, 'bold')).pack()
+    emp_card = StringVar()
+    entry_card = ttk.Entry(toprightframe, textvariable=emp_card)
+    entry_card.pack(pady=10)
+    entry_card.config(justify='center', font=("Arial", 13, 'bold'))
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=17)
+
+    send_button = ttk.Button(maindwnframe, text="Dodaj pracownika", style='my.TButton', command=lambda wnd=wnd: Add_Emp_SQL(emp_fname.get(), emp_lname.get(), company_dict_rev[emp_company.get()], dep_dict_rev[emp_department.get()], city_dict_rev[emp_city.get()], tl_dict_rev[emp_tl.get()], agr_dict_rev[emp_agr.get()], pos_dict_rev[emp_pos.get()], smk_dict_rev[emp_smk.get()], emp_card.get(), wnd))
+    send_button.pack(pady=30, ipady=10, ipadx=10)
+
 def Remove_Employee(emp_id, uname, frame):
     if Get_Right(uname, "rm_emp") == False:
         messagebox.showwarning("Ostrzeżenie", "Brak uprawnień do edycji pracowników\nSkontaktuj się z administratorem")
@@ -594,11 +714,17 @@ def Remove_Employee(emp_id, uname, frame):
         print("E tam")
 
 def Update_App(main_wnd, version, update_version):
-    if version == update_version:
+    def intversion(version, update_version):
+        int_version = int(version[0] + version[2] + version[4:])
+        int_update_version = int(update_version[0] + update_version[2] + update_version[4:])
+        if int_version < int_update_version:
+            return True
+        else:
+            return False
+
+    if intversion(version, update_version) == False:
         messagebox.showinfo("Aktualizacja", "Wszystko jest aktualne ;)")
         return
-    print(version)
-    print(update_version)
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(current_directory + "\img\\favicon.ico")
@@ -672,3 +798,71 @@ def Add_Comment(selected_emp, emp_id, uname):
     ttk.Label(wnd, text="Wybrany pracownik", font=("Arial", 13, 'bold')).pack(side=TOP)
     the_choosen_one = ttk.Entry(wnd, state= "disabled", font=("Arial", 13, 'bold'), justify='center', textvariable=selected_emp)
     the_choosen_one.pack(side=TOP, fill=BOTH, expan=False)
+
+def ToDo():
+    wnd = Toplevel()
+    wnd.resizable(False, False)
+    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.title("About")
+    wnd.lift()
+    wnd.attributes("-topmost", True)
+    wnd.geometry("538x527")
+
+    imgpath = current_directory + "\img\pink.png"
+    print(imgpath)
+    todo = PhotoImage(file=imgpath)
+
+    canvas1 = Canvas(wnd)
+    canvas1.pack(fill = "both", expand = True)
+    canvas1.create_image(0, 0, image = todo, anchor = "nw")
+    canvas1.image = todo
+    ttk.Label(wnd, text="To Do!", font=("Arial", 13, 'bold')).pack()
+
+def Edit_Employee_Overtime(emp_id, ent_id, rights_dict):
+    wnd = Toplevel()
+    wnd.resizable(False, False)
+    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.title("About")
+    wnd.lift()
+    wnd.attributes("-topmost", True)
+
+    ttk.Label(wnd, text="Podaj ilość nadgodzin:", font=("Arial", 13, 'bold')).pack(side=TOP, pady=10)
+    overtime=StringVar()
+    entry_overtime = ttk.Entry(wnd, textvariable=overtime)
+    entry_overtime.pack(pady=10)
+    entry_overtime.config(justify='center', font=("Arial", 13, 'bold'))
+    
+    
+    send_button = ttk.Button(wnd, text="Aktualizuj", style='my.TButton', command=lambda emp_id=emp_id, ent_id=ent_id, wnd=wnd, rights_dict=rights_dict: Send_Overtime(emp_id, overtime.get(), ent_id, wnd, rights_dict))
+    send_button.pack(pady=10, ipady=10, ipadx=10)
+    ttk.Separator(wnd, orient='horizontal').pack(fill='x', pady=20)
+    ttk.Label(wnd, text="Wybrany pracownik:", font=("Arial", 13, 'bold')).pack(side=TOP)
+    ttk.Label(wnd, text=Get_Name(emp_id), font=("Arial", 13)).pack(side=TOP, pady=3)
+
+def Month_to_String(month):
+    month = int(month)
+    if month == 1:
+        month = "Styczeń"
+    elif month == 2:
+        month = "Luty"
+    elif month == 3:
+        month = "Marzec"
+    elif month == 4:
+        month = "Kwiecień"
+    elif month == 5:
+        month = "Maj"
+    elif month == 6:
+        month = "Czerwiec"
+    elif month == 7:
+        month = "Lipiec"
+    elif month == 8:
+        month = "Sierpień"
+    elif month == 9:
+        month = "Wrzesień"
+    elif month == 10:
+        month = "Październik"
+    elif month == 11:
+        month = "Listopad"
+    elif month == 12:
+        month = "Grudzień"
+    return month
