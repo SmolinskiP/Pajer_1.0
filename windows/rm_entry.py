@@ -10,7 +10,7 @@ from datetime import date, datetime
 from tkcalendar import Calendar
 from tktimepicker import AnalogPicker, AnalogThemes
 from tktimepicker import constants
-import hashlib, re, threading, wget, os
+import hashlib, re, threading, wget, os, requests
 import webbrowser
 from pathlib import Path
 
@@ -714,6 +714,16 @@ def Remove_Employee(emp_id, uname, frame):
         print("E tam")
 
 def Update_App(main_wnd, version, update_version):
+    try:
+        strtext = ""
+        r = requests.get('https://p.pdaserwis.pl/pliki/update/changelog.txt', allow_redirects=True) #Get version
+        strtext = str(r.content).split('_')
+        strtext = strtext[0]
+        strtext = strtext[2:]
+        strtext = strtext.replace("\\r\\n", "\n")
+    except Exception as e:
+        strtext = ("Błąd pobierania listy zmian:\n %s" % e)
+
     def intversion(version, update_version):
         int_version = int(version[0] + version[2] + version[4:])
         int_update_version = int(update_version[0] + update_version[2] + update_version[4:])
@@ -723,7 +733,7 @@ def Update_App(main_wnd, version, update_version):
             return False
 
     if intversion(version, update_version) == False:
-        messagebox.showinfo("Aktualizacja", "Wszystko jest aktualne ;)")
+        messagebox.showinfo("Aktualizacja", "Wszystko jest aktualne ;)\nNowe w tej wersji:\n%s" % strtext)
         return
     wnd = Toplevel()
     wnd.resizable(False, False)
@@ -755,10 +765,13 @@ def Update_App(main_wnd, version, update_version):
         dl_thread.start()
 
     ttk.Label(wnd, text="Pobieranie pliku", font=("Arial", 13, 'bold')).pack(pady=10)
-    bar = ttk.Progressbar(wnd, length=200)
+    bar = ttk.Progressbar(wnd, length=500)
     bar.pack(pady=10, padx=20)
     prog_label = ttk.Label(wnd, textvariable=prog_status, font=("Arial", 12, 'bold'))
     prog_label.pack(pady=10)
+    ttk.Label(wnd, text='Co nowego', font=("Arial", 13, 'bold')).pack(pady=10)
+    changelog = ttk.Label(wnd, text=strtext)
+    changelog.pack(pady=10)
 
     dl()
 

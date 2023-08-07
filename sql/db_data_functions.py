@@ -45,9 +45,12 @@ def Create_Dict(table, name):
         dictt[key] = item
     return dictt
 
-def Create_Emp_Dict(department, emp_dict):
+def Create_Emp_Dict(department, emp_dict, rights_dict=None):
     get=conn.cursor()
     query = 'SELECT id, imie, nazwisko, palacz, dzial, lokalizacja, teamleader, karta, umowa, firma, stanowisko FROM pracownicy WHERE dzial = %s AND active = 1 ORDER BY imie' % str(department)
+    if rights_dict != None:
+        if rights_dict["tl"] > 0:
+            query = 'SELECT id, imie, nazwisko, palacz, dzial, lokalizacja, teamleader, karta, umowa, firma, stanowisko FROM pracownicy WHERE teamleader = %s AND active = 1 ORDER BY imie' % str(rights_dict['tl'])
     get.execute(query)
     value=get.fetchall()
     i=0
@@ -314,13 +317,16 @@ def Add_Emp_SQL(fname, lname, cmp, dep, city, tl, agr, pos, smk, emp_card, wnd):
     wnd.destroy()
     messagebox.showinfo(title="Sukces", message="Pomyślnie dodano pracownika")
 
-def Get_Emps_By_Department(dep, uname):
+def Get_Emps_By_Department(dep, uname, rights_dict=None):
     sql_query = "SELECT id, imie, nazwisko, karta, stanowisko, dzial FROM pracownicy WHERE dzial = %s AND active = 1 ORDER BY imie" % dep
     if dep == 2468642:
         if Get_Right(uname, "rm_emp") == False:
             messagebox.showwarning("Brak uprawnień", "Nie masz uprawnień do przeprowadzenia tej akcji\nSkontaktuj się z administratorem.")
             return
         sql_query = "SELECT id, imie, nazwisko, karta, stanowisko, dzial FROM pracownicy WHERE active = 1 ORDER BY imie"
+    if rights_dict != None:
+        if rights_dict['tl'] > 0:
+            sql_query = "SELECT id, imie, nazwisko, karta, stanowisko, dzial FROM pracownicy WHERE teamleader = %s AND active = 1 ORDER BY imie" % rights_dict['tl']
     get_sql = conn.cursor()
     get_sql.execute(sql_query)
     output = get_sql.fetchall()

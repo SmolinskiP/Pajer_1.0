@@ -408,7 +408,7 @@ def Create_Table_Overtime_Dep(department):
     e_hr.insert(END, "Nadgodziny")
     e_hr.config(state='disabled', justify='center', font=fgfont)
 
-    emp_list = Get_Emps_By_Department(department, uname)
+    emp_list = Get_Emps_By_Department(department, uname, rights_dict)
     emp_list = Get_Emps_Overtime(emp_list)
 
     for event in emp_list:
@@ -806,7 +806,7 @@ except:
 def Create_Menu():
     emp_dict = {}
     for item in dep_dict:
-        Create_Emp_Dict(item, emp_dict)
+        Create_Emp_Dict(item, emp_dict, rights_dict)
     menubar = Menu(main_window)
 
     opt_menu = Menu(menubar, tearoff=0)
