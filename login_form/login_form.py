@@ -1,17 +1,21 @@
 ﻿
 from tkinter import *
+from tkinter import messagebox
 import tkinter.ttk as ttk
 import hashlib
+from turtle import home
 from sql.db_connect import *
 import mysql.connector as database
 from fnct.getpath import Get_Local_Path
 from PIL import Image, ImageTk
+import os
+import pyuac
 
 current_directory = Get_Local_Path()
 global rights_dict
 rights_dict = {}
 global version
-version = '1.0.1'
+version = '1.0.2'
 
 def refresh(self):
     self.destroy()
@@ -41,11 +45,19 @@ def login():
     global uname
     uname=username.get()
     pwd=password.get()
+    home_directory = os.path.expanduser('~')
+    home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    try:
+        os.system('mkdir %s' % home_directory)
+    except:
+        pass
+    pajer_file = os.path.join(home_directory, "lastlogin.txt")
     #applying empty validation
     if uname=='' or pwd=='':
         message.set("Wpisz proszę login i hasło")
     else:
         if validate_login(uname, pwd) == True:
+
             main_window.deiconify()
             login_screen.destroy()
 #            from pajer import Create_Employee_Tab
@@ -72,6 +84,16 @@ def login():
             except:
                 rights_dict['cities'] = user_rights[0][6]
             rights_dict['tl'] = user_rights[0][7]
+
+            try:
+                myfile = open(pajer_file,"w")
+                myfile.write(uname)
+                myfile.close()
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+                print(e)
+                pass
+
             from Pajer import Create_Menu
             Create_Menu()
 
@@ -80,6 +102,9 @@ def login():
             message.set("Nieprawidłowe dane logowania.")
 
 def login_form():
+    home_directory = os.path.expanduser('~')
+    home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    pajer_file = os.path.join(home_directory, "lastlogin.txt")
     global login_screen
     try:
         tmpvariable07 = uname
@@ -92,6 +117,13 @@ def login_form():
         imgpath = current_directory + "\img\logo2.png"
         logo = PhotoImage(file=imgpath)
 
+        try:
+            myfile = open(pajer_file,"r")
+            savedlogin = myfile.read()
+            myfile.close()
+        except:
+            pass
+
     #declaring variable
         global message;
         global username
@@ -99,6 +131,11 @@ def login_form():
         username = StringVar()
         password = StringVar()
         message = StringVar()
+        
+        try:
+            username.set(savedlogin)
+        except:
+            pass
 
         canvas1 = Canvas(login_screen, width = 400, height = 400)
         canvas1.pack(fill = "both", expand = True)
@@ -112,13 +149,20 @@ def login_form():
         #ttk.Label(canvas1, text="Nazwa uzytkownika * ").pack(side='top',  padx=5,  pady=(40, 5))
         canvas1.create_text(160, 60, text="Nazwa użytkownika:", fill="black", font=('Helvetica 11 bold'))
         login1_entry = ttk.Entry(canvas1, textvariable=username)
-        login1_entry.focus()
+        if 'savedlogin' not in locals():
+            login1_entry.focus()
         login1_entry.pack(side='top',  padx=5,  pady=20)
+        if 'savedlogin' not in locals():
+            login1_entry.focus()
         #ttk.Label(canvas1, text="Haslo * ").pack(side='top',  padx=5,  pady=5)
         canvas1.create_text(160, 135, text="Hasło:", fill="black", font=('Helvetica 11 bold'))
         login_entry = ttk.Entry(canvas1, textvariable=password ,show="*")
         login_entry.bind("<Return>", (lambda event: login()))
+        if 'savedlogin' in locals():
+            login_entry.focus()
         login_entry.pack(side='top',  padx=5,  pady=(30,5))
+        if 'savedlogin' in locals():
+            login_entry.focus()
         ttk.Button(canvas1, text="Login",command=login).pack(side='top',  padx=5,  pady=15)
 
 

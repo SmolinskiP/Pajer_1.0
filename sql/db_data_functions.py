@@ -39,7 +39,7 @@ def Get_Right(uname, right_type):
 def Create_Dict(table, name):
     dictt = {}
     get = conn.cursor()
-    get.execute("SELECT id, %s FROM %s ORDER BY %s" % (name, table, name))
+    get.execute("SELECT id, %s FROM %s" % (name, table))
     value = get.fetchall()
     for key, item in value:
         dictt[key] = item

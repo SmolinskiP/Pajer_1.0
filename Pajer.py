@@ -666,6 +666,8 @@ def Create_Table_Employees(department, rights_dict):
                     edit_btn.pack(side=LEFT)
                     rm_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Usuń", width = 5, command=lambda uname=uname, emp_id = dict_firma["emp_id" + str(i)].get(), frame=dict_firma[str("frame" + str(i))]: Remove_Employee(emp_id, uname, frame))
                     rm_btn.pack(side=LEFT)
+                choose_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Wybierz", command=lambda emp_id=dict_firma["emp_id" + str(i)].get(), emp_fname=dict_firma["emp_fname" + str(i)].get(), emp_lname=dict_firma["emp_lname" + str(i)].get(), date_from=Get_Date_From_Callendar(cal_from), date_to=Get_Date_From_Callendar(cal_to): Create_Table_Presence(emp_id, emp_fname, emp_lname, date_from, date_to))
+                choose_btn.pack(side=LEFT)
         i+=1
 
     middle_screen.coords(middle_screen_id, middle_screen.winfo_width()/2, 0)
