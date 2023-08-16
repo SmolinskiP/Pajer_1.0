@@ -1,5 +1,6 @@
 ﻿from tkinter import *
 from tkinter import messagebox
+import mysql.connector as database
 import tkinter.ttk as ttk
 from tkinter.messagebox import askyesno
 from sql.db_data_functions import Delete_SQL, Add_Break_SQL, Get_Hash, Change_Password_SQL, Add_EntryExit_SQL, Add_Holiday_SQL, Create_Dict, Add_Random_Entry_SQL, Get_Single_Emp, Edit_Emp_Data, Get_Right, Delete_Emp_SQL, Add_Comment_SQL, Add_Emp_SQL, Get_Name, Send_Overtime
@@ -23,7 +24,10 @@ def Changelog():
 
 def Change_Connection_Params():
 
-    filepath = Get_Local_Path() + "\\sql\\params.txt"
+    home_directory = os.path.expanduser('~')
+    home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    filepath = os.path.join(home_directory, "params.txt")
+
     db_file = open(filepath, 'r')
     db_params = db_file.readlines()
     connection_dict = {}
@@ -89,7 +93,10 @@ def Change_Connection_Params():
 
     def Params_Act(login, password, host, db, port):
         try:
-            filepath = Get_Local_Path() + "\\sql\\params.txt"
+            conn = database.connect(user = login, password = password, host = host, database = db, port = port)
+            home_directory = os.path.expanduser('~')
+            home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+            filepath = os.path.join(home_directory, "params.txt")
             db_file = open(filepath, 'w')
             db_file.write('dbLogin="%s"\n' % login)
             db_file.write('dbPassword="%s"\n' % password)
@@ -97,7 +104,7 @@ def Change_Connection_Params():
             db_file.write('dbDatabase="%s"\n' % db)
             db_file.write('dbPort="%s"' % port)
             db_file.close()
-            messagebox.showinfo("Sukces", "Pomyślnie ustawiono nowe parametry połączenia")
+            messagebox.showinfo("Sukces", "Pomyślnie ustawiono nowe parametry połączenia\n\nAby ustawienia zadziałały, zresetuj aplikację")
             wnd.destroy()
         except Exception as e:
             messagebox.showerror("Błąd!", "Coś poszło nie tak:\n%s" % e)

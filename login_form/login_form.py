@@ -9,7 +9,6 @@ import mysql.connector as database
 from fnct.getpath import Get_Local_Path
 from PIL import Image, ImageTk
 import os
-import pyuac
 
 current_directory = Get_Local_Path()
 global rights_dict
@@ -47,10 +46,8 @@ def login():
     pwd=password.get()
     home_directory = os.path.expanduser('~')
     home_directory = os.path.join(home_directory, "Documents", "PajerApp")
-    try:
+    if os.path.exists(home_directory) == False:
         os.system('mkdir %s' % home_directory)
-    except:
-        pass
     pajer_file = os.path.join(home_directory, "lastlogin.txt")
     #applying empty validation
     if uname=='' or pwd=='':

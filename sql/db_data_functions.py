@@ -20,10 +20,11 @@ def Number_To_Hour(number):
 def SQL_Connect(dbLogin, dbPassword, dbHost, dbDatabase, dbPort):
     try:
         conn = database.connect(user = dbLogin, password = dbPassword, host = dbHost, database = dbDatabase, port = dbPort)
+        return conn
     except database.Error as e:
         print(f"Nie udało się połączyć z bazą danych MariaDB: {e}")
         messagebox.showerror(title="Błąd połączenia z bazą danych", message=f"Brak dostępu do bazy danych\nNajprawdopodobniej nieprawidłowe parametry połączenia\nTreść błędu:\nNie udało się połączyć z bazą danych MariaDB: {e}")
-    return conn
+    
 
 conn = SQL_Connect(dbLogin, dbPassword, dbHost, dbDatabase, dbPort)
 

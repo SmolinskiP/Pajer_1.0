@@ -2,7 +2,7 @@
 from turtle import width
 from tkcalendar import Calendar
 from tkinter import messagebox
-
+from time import sleep
 #import helping modules
 import requests, os
 import mysql.connector as database
@@ -22,6 +22,97 @@ def intversion(version, update_version):
         return True
     else:
         return False
+
+try:
+    conn = database.connect(user = dbLogin, password = dbPassword, host = dbHost, database = dbDatabase, port = dbPort)
+except Exception as e:
+    home_directory = os.path.expanduser('~')
+    home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    first_run = os.path.join(home_directory, "firstrun.txt")
+    if os.path.isfile(first_run) == False:
+        quest_db = False
+        firstrun = messagebox.askyesno(title="Błąd połączenia z bazą danych", message=f"Prawopodobnie włączasz aplikację po raz pierwszy.\n\nAby aplikacja działała jak należy, potrzebuje połączenia z bazą danych. Była testowana na bazie MariaDB, którą też polecam.\n\nWykonaj następujące kroki:\n1. Zainstaluj silnik bazy danych.\n2. Utwórz bazę danych o nazwie 'RFID' oraz użytkownika z pełnym dostępem do tej bazy\n3. Kliknij TAK, aby podać parametry połączenia\n4. Poczekaj aż zostaną utworzone niezbędne tabele i wpisy.\n5. Zresetuj aplikację i zaloguj się jako admin/qwerty\n\nhttps://mariadb.org/download/\n\n")
+        if firstrun:
+            wnd = Toplevel()
+            wnd.resizable(False, False)
+            wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+            wnd.title("Baza")
+            wnd.lift()
+            wnd.attributes("-topmost", True)
+
+            db_login = StringVar()
+            db_password = StringVar()
+            db_host = StringVar()
+            db_db = StringVar()
+            db_port = StringVar()
+
+            db_login.set(connection_dict['login'])
+            db_password.set(connection_dict['password'])
+            db_host.set(connection_dict['host'])
+            db_db.set(connection_dict['db'])
+            db_port.set(connection_dict['port'])
+        
+            s = ttk.Style()
+            s.configure('my.TButton', font=('Arial', 14, 'bold'), focusthickness=3, focuscolor='none')
+    
+            lbl_login = ttk.Label(wnd, text="Login", font=("Arial", 13, 'bold'))
+            ent_login = ttk.Entry(wnd)
+            lbl_password = ttk.Label(wnd, text="Hasło", font=("Arial", 13, 'bold'))
+            ent_password = ttk.Entry(wnd, show="*")
+            lbl_host = ttk.Label(wnd, text="Host", font=("Arial", 13, 'bold'))
+            ent_host = ttk.Entry(wnd)
+            lbl_db = ttk.Label(wnd, text="Baza", font=("Arial", 13, 'bold'))
+            ent_db = ttk.Entry(wnd)
+            lbl_port = ttk.Label(wnd, text="Port", font=("Arial", 13, 'bold'))
+            ent_port = ttk.Entry(wnd)
+            send_button = ttk.Button(wnd, text="Aktualizuj", style='my.TButton', command=lambda: Params_Act(ent_login.get(), ent_password.get(), ent_host.get(), ent_db.get(), ent_port.get()))
+
+            lbl_login.pack(pady=5)
+            ent_login.pack(pady=5)
+            lbl_password.pack(pady=5)
+            ent_password.pack(pady=5)
+            lbl_host.pack(pady=5)
+            ent_host.pack(pady=5)
+            lbl_db.pack(pady=5)
+            ent_db.pack(pady=5)
+            lbl_port.pack(pady=5)
+            ent_port.pack(pady=5)
+            send_button.pack(pady=30, ipady=10, ipadx=10, padx=30)
+
+            ent_db.insert(END, "RFID")
+            ent_port.insert(END, "3306")
+
+            def Params_Act(login, password, host, db, port):
+                try:
+                    conn = database.connect(user = login, password = password, host = host, database = db, port = port)
+                    home_directory = os.path.expanduser('~')
+                    home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+                    filepath = os.path.join(home_directory, "params.txt")
+                    db_file = open(filepath, 'w')
+                    db_file.write('dbLogin="%s"\n' % login)
+                    db_file.write('dbPassword="%s"\n' % password)
+                    db_file.write('dbHost="%s"\n' % host)
+                    db_file.write('dbDatabase="%s"\n' % db)
+                    db_file.write('dbPort="%s"' % port)
+                    db_file.close()
+                    messagebox.showinfo("Sukces", "Pomyślnie ustawiono nowe parametry połączenia\n\nAby ustawienia zadziałały, zresetuj aplikację")
+                    wnd.destroy()
+                    db_file = open(first_run, 'w')
+                    db_file.write("1")
+                    db_file.close()
+                    sleep(5)
+                    exit()
+                except Exception as e:
+                     messagebox.showerror("Błąd!", "Coś poszło nie tak:\n%s" % e)
+        else:
+            exit()
+    else:
+        quest_db = messagebox.askyesno(title="Błąd połączenia z bazą danych", message=f"Brak dostępu do bazy danych\nNajprawdopodobniej nieprawidłowe parametry połączenia\nTreść błędu:\nNie udało się połączyć z bazą danych MariaDB: {e}\n\nCzy chcesz podać nowe parametry połączenia?")
+    if quest_db:
+        Change_Connection_Params()
+    else:
+        pass
+
 
 try:
     r = requests.get('https://p.pdaserwis.pl/pliki/update/version.txt', allow_redirects=True) #Get version

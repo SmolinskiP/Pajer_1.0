@@ -1,8 +1,20 @@
 from fnct.getpath import Get_Local_Path
 import re
+import os
+
+home_directory = os.path.expanduser('~')
+home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+pajer_dbfile = os.path.join(home_directory, "params.txt")
+
+if os.path.exists(home_directory) == False:
+    os.system('mkdir %s' % home_directory)
 
 filepath = Get_Local_Path() + "\\sql\\params.txt"
-db_file = open(filepath, 'r')
+
+if os.path.isfile(pajer_dbfile) == False:
+    os.system('copy "%s" "%s"' % (filepath, home_directory))
+
+db_file = open(pajer_dbfile, 'r')
 db_params = db_file.readlines()
 connection_dict = {}
 
