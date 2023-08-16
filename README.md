@@ -32,6 +32,12 @@ conn3 = database.connect(
 ```
 Run with:
 1. startbat.vbs
-2. ```python readrs.py```
+2. ```python readrs.py```<br /><br />
 There is also a function to turn on the computer for an employee who logs in, but this already requires changes in the database which I will not discuss here<br />
 Code was tested on Debian11 / Windows10. To change the system small changes in the code are required, currently the application is adapted to run on windows.<br />
+<br /><br />
+
+The next step is to create tables in the database. We do this by running the main database application. We do this either by installing it with an .exe file in releases or by cloning repo and running ```python Pajer.py``` The first run will ask us whether to create tables and to specify the connection parameters. NOTE. THE DATABASE ENGINE MUST BE INSTALLED BEFOREHAND!!! In case of problems, we create the database manually using the "DB.sql" file located in the application's main folder.<br /><br />
+
+When you have done all this, reset the application and log in with login/password: ```admin / qwerty```<br /><br />
+ENJOY!
