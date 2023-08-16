@@ -8,8 +8,30 @@ Requirements:
 4. RFID Cards
 5. Local / Remote Database (tested on MariaDB - [LINK](https://mariadb.org/download/))
 
-Copy the RCP folder to the device to which you have connected the reader and run with:
+
+Copy the RCP folder to the device to which you have connected the reader<br />
+Change the "port" in:
+```
+ser = serial.Serial(
+        port='COM7',
+        baudrate=9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=0.2,
+)
+```
+Change connection params in function "Insert_SQL_Remote":
+```
+conn3 = database.connect(
+        user="rcp",
+        password="STRONGPASSWORD",
+        host="XXX.XXX.XXX.XXX",
+        database="RFID"
+        )
+```
+Run with:
 1. startbat.vbs
 2. ```python readrs.py```
-
-Code was tested on
+There is also a function to turn on the computer for an employee who logs in, but this already requires changes in the database which I will not discuss here<br />
+Code was tested on Debian11 / Windows10. To change the system small changes in the code are required, currently the application is adapted to run on windows.<br />
