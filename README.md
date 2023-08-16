@@ -10,7 +10,7 @@ Requirements:
 
 
 Copy the RCP folder to the device to which you have connected the reader<br />
-Change the "port" in:
+Change the "port" in readrs.py:
 ```
 ser = serial.Serial(
         port='COM7',
