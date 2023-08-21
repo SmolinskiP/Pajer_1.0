@@ -2,11 +2,11 @@ import mysql.connector as database
 from wakeonlan import send_magic_packet
 import paramiko
 
-dbLogin = "rcp"
-dbPassword = "PDArcpSERWIS"
-dbHost = "p.pdaserwis.pl"
-dbDatabase = "RFID"
-dbPort = "3306"
+dbLogin = ""
+dbPassword = ""
+dbHost = ""
+dbDatabase = ""
+dbPort = ""
 
 def SQL_Connect(dbLogin, dbPassword, dbHost, dbDatabase, dbPort):
     try:
@@ -45,7 +45,7 @@ def WakeComputer2(card_id, conn):
         print(e)
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect("10.0.10.1", username="wakeonlan", password="81d7a5c58", port=4224)
+    ssh.connect("10.0.10.1", username="", password="", port=4224)
     try:
         ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(cmd_to_execute)
     except Exception as e:

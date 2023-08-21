@@ -27,6 +27,8 @@
     <Compile Include="fnct\check_time.py" />
     <Compile Include="login_form\login_form.py" />
     <Compile Include="Pajer.py" />
+    <Compile Include="rcp\readrs.py" />
+    <Compile Include="rcp\wol.py" />
     <Compile Include="sql\db_connect.py" />
     <Compile Include="sql\db_data_functions.py" />
     <Compile Include="windows\rm_entry.py" />
@@ -34,10 +36,26 @@
   <ItemGroup>
     <Folder Include="login_form\" />
     <Folder Include="fnct\" />
+    <Folder Include="rcp\" />
+    <Folder Include="rcp\img\" />
+    <Folder Include="rcp\log\" />
+    <Folder Include="rcp\__pycache__\" />
     <Folder Include="windows\" />
     <Folder Include="sql\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="rcp\img\pp.png" />
+    <Content Include="rcp\img\thinking.png" />
+    <Content Include="rcp\log\accesslog.txt" />
+    <Content Include="rcp\log\connectlog.txt" />
+    <Content Include="rcp\log\errorlog.txt" />
+    <Content Include="rcp\log\karty.txt" />
+    <Content Include="rcp\RCP.bat" />
+    <Content Include="rcp\reboot.bat" />
+    <Content Include="rcp\startbat.vbs" />
+    <Content Include="rcp\startrcp.bat" />
+    <Content Include="rcp\time.ico" />
+    <Content Include="rcp\__pycache__\serial.cpython-37.pyc" />
     <Content Include="sql\params.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
