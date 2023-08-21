@@ -33,7 +33,7 @@ try:
     dbPort = connection_dict['port']
 except:
     db_file = open(pajer_dbfile, 'w')
-    db_file.write('dbLogin="firsturun"\n')
+    db_file.write('dbLogin="firstrun"\n')
     db_file.write('dbPassword=""\n')
     db_file.write('dbHost=""\n')
     db_file.write('dbDatabase=""\n')
