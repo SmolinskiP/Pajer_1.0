@@ -1,4 +1,4 @@
-dbLogin="rcpa"
+dbLogin="rcp"
 dbPassword="PDArcpSERWIS"
 dbHost="p.pdaserwis.pl"
 dbDatabase="RFID"

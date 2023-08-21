@@ -11,6 +11,7 @@
 *.sln.docstates
 dist/*
 build/*
+sql/params.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

@@ -4,7 +4,7 @@ from tkcalendar import Calendar
 from tkinter import messagebox
 from time import sleep
 #import helping modules
-import requests, os
+import requests, os, re
 import mysql.connector as database
 from datetime import date, datetime
 
@@ -13,6 +13,7 @@ from login_form.login_form import *
 from sql.db_data_functions import Create_Dict, Create_Emp_Dict, SQL_Connect, Get_Emp_Occurance, Get_Emp_List, Activate_Employee, Get_Emps_By_Department, Get_Emps_Overtime, Get_Emps_By_Id, Get_Emps_Overtime_Single
 from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_EntryExit, Add_Holiday, Add_Random_Entry, Change_Connection_Params, Edit_Employee, Remove_Employee, Changelog, Update_App, Add_Comment, Add_Employee, ToDo, Edit_Employee_Overtime, Month_to_String
 from fnct.iseven import isEven
+from fnct.getpath import Get_Local_Path
 from sql.db_connect import *
 
 def intversion(version, update_version):
@@ -28,6 +29,19 @@ try:
 except Exception as e:
     home_directory = os.path.expanduser('~')
     home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    try:
+        params_file_path = Get_Local_Path() + "\\sql\\params.txt"
+        os.system('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
+        print('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
+        firstrun_check_file = open(home_directory + "\\params.txt", 'r')
+        firstrun_check = re.findall(r'"([^"]*)"', db_params[0])[0]
+        print(firstrun_check)
+        if firstrun_check != "firstrun":
+            fr_file = open(home_directory + "\\firstrun.txt", 'w')
+            fr_file.write("1")
+            fr_file.close()
+    except Exception as ex:
+        print("Nie skopiowano pliku\n:%s" % ex)
     first_run = os.path.join(home_directory, "firstrun.txt")
     if os.path.isfile(first_run) == False:
         quest_db = False
@@ -81,6 +95,19 @@ except Exception as e:
 
             ent_db.insert(END, "RFID")
             ent_port.insert(END, "3306")
+            
+            def Execute_SQL_Scripts(filename, conn):
+                f = open(filename, 'r')
+                sqlfile = f.read()
+                f.close()
+                sql_commands = sqlfile.split(';')
+                c = conn.cursor()
+                for command in sql_commands:
+                    try:
+                        print(command)
+                        c.execute(command)
+                    except Exception as e:
+                        print("SKipped: %s" % e)
 
             def Params_Act(login, password, host, db, port):
                 try:
@@ -100,6 +127,9 @@ except Exception as e:
                     db_file = open(first_run, 'w')
                     db_file.write("1")
                     db_file.close()
+                    sql_insert = messagebox.askyesno("Czy załadować SQL?", "Czy chcesz załadować skrypty SQL do utworzenia bazy danych?\nUWAGA! Nie klikaj tak, jeśli jakaś baza danych o nazwie RFID jest już stworzona.\nMoże to prowadzić do uszkodzenia bazy.")
+                    if sql_insert:
+                        Execute_SQL_Scripts(Get_Local_Path() + "\\DB.sql", conn)
                     sleep(5)
                     exit()
                 except Exception as e:
