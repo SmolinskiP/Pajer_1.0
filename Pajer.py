@@ -34,6 +34,7 @@ except Exception as e:
         os.system('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
         print('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
         firstrun_check_file = open(home_directory + "\\params.txt", 'r')
+        db_params = firstrun_check_file.readlines()
         firstrun_check = re.findall(r'"([^"]*)"', db_params[0])[0]
         print(firstrun_check)
         if firstrun_check != "firstrun":
@@ -44,6 +45,7 @@ except Exception as e:
         print("Nie skopiowano pliku\n:%s" % ex)
     first_run = os.path.join(home_directory, "firstrun.txt")
     if os.path.isfile(first_run) == False:
+    #if firstrun_check != "firstrun":
         quest_db = False
         firstrun = messagebox.askyesno(title="Błąd połączenia z bazą danych", message=f"Prawopodobnie włączasz aplikację po raz pierwszy.\n\nAby aplikacja działała jak należy, potrzebuje połączenia z bazą danych. Była testowana na bazie MariaDB, którą też polecam.\n\nWykonaj następujące kroki:\n1. Zainstaluj silnik bazy danych.\n2. Utwórz bazę danych o nazwie 'RFID' oraz użytkownika z pełnym dostępem do tej bazy\n3. Kliknij TAK, aby podać parametry połączenia\n4. Poczekaj aż zostaną utworzone niezbędne tabele i wpisy.\n5. Zresetuj aplikację i zaloguj się jako admin/qwerty\n\nhttps://mariadb.org/download/\n\n")
         if firstrun:
