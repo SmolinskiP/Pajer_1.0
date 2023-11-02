@@ -166,5 +166,5 @@ def login_form():
 
 main_window = Tk()
 main_window.iconbitmap(current_directory + "\img\\favicon.ico")
-main_window.title("PaJer v%s - najlepszy program Rejestracji Czasu Pracy we wszechświecie" % version)
+main_window.title("PaJer v%s - System Rejestracji Czasu Pracy" % version)
 main_window.state('zoomed')

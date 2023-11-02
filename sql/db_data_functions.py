@@ -345,6 +345,7 @@ def Get_Emps_Overtime(emp_list):
     new_emp_list = []
     for item in emp_list:
         sql_query = "SELECT nadgodziny, id FROM nadgodziny WHERE pracownik = %s ORDER BY data DESC LIMIT 1" % item[0]
+        print(sql_query)
         get_sql = conn.cursor()
         get_sql.execute(sql_query)
         output = get_sql.fetchall()[0]

@@ -5,6 +5,7 @@ from tkinter import messagebox
 from time import sleep
 #import helping modules
 import requests, os, re
+import mysql.connector
 import mysql.connector as database
 from datetime import date, datetime
 
@@ -15,6 +16,7 @@ from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_Entry
 from fnct.iseven import isEven
 from fnct.getpath import Get_Local_Path
 from sql.db_connect import *
+from excel_fun.presence import Create_Presence_Dict, Create_Presence_Excel
 
 def intversion(version, update_version):
     int_version = int(version[0] + version[2] + version[4:])
@@ -160,6 +162,7 @@ try:
     print("==============================================================================")
     print("PaJer v%s - najlepszy program Rejestracji Czasu Pracy we wszechświecie" % version)
     print("Zalogowany użytkownik - %s" % uname)
+    print("Najnowsza wersja - %s" % update_version)
     print("==============================================================================")
 except:
     main_window.withdraw()
@@ -198,7 +201,7 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
         #get = conn.cursor()
         #get.execute("SELECT id, %s FROM %s" % (name, table))
         #value = get.fetchall()
-
+        
         i = 1
         dict_firma = {}
         dict_firma["frame0"] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
@@ -227,18 +230,22 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
         e_ac.pack(side=LEFT)
         e_ac.insert(END, "Akcja")
         e_ac.config(state='disabled', justify='center', font=fgfont)
-        e_cm = ttk.Entry(dict_firma["frame0"])
-        e_cm.pack(side=LEFT)
-        e_cm.insert(END, "Komentarz")
-        e_cm.config(state='disabled', justify='center', font=fgfont)
-        e_ed = ttk.Entry(dict_firma["frame0"])
-        e_ed.pack(side=LEFT)
-        e_ed.insert(END, "Edycja")
-        e_ed.config(state='disabled', justify='center', font=fgfont)
-        e_et = ttk.Entry(dict_firma["frame0"])
-        e_et.pack(side=LEFT)
-        e_et.insert(END, "Czas edycji")
-        e_et.config(state='disabled', justify='center', font=fgfont)
+        print(main_window.winfo_width())
+        if main_window.winfo_width() > 1100:
+            e_cm = ttk.Entry(dict_firma["frame0"])
+            e_cm.pack(side=LEFT)
+            e_cm.insert(END, "Komentarz")
+            e_cm.config(state='disabled', justify='center', font=fgfont)
+        if main_window.winfo_width() > 1300:
+            e_ed = ttk.Entry(dict_firma["frame0"])
+            e_ed.pack(side=LEFT)
+            e_ed.insert(END, "Edycja")
+            e_ed.config(state='disabled', justify='center', font=fgfont)
+        if main_window.winfo_width() > 1500:
+            e_et = ttk.Entry(dict_firma["frame0"])
+            e_et.pack(side=LEFT)
+            e_et.insert(END, "Czas edycji")
+            e_et.config(state='disabled', justify='center', font=fgfont)
         date_from = Get_Date_From_Callendar(cal_from)
         date_to = Get_Date_From_Callendar(cal_to)
         sql_result = Get_Emp_Occurance(id, date_from, date_to)
@@ -293,7 +300,7 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
                     e.pack(side=LEFT)
                     e.insert(END, dict_firma[key].get())
                     e.config(state='disabled', justify='center', foreground=fgcolor, font=fgfont)
-                elif j == 3:
+                elif j == 3 and main_window.winfo_width() > 1100:
                     key = "entry_comment" + str(i)
                     dict_firma[key] = StringVar(middle_screen_panel)
                     if event[j] == None:
@@ -304,7 +311,7 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
                     e.pack(side=LEFT)
                     e.insert(END, dict_firma[key].get())
                     e.config(state='disabled', justify='center', foreground=fgcolor, font=fgfont)
-                elif j == 4:
+                elif j == 4 and main_window.winfo_width() > 1300:
                     key = "entry_editor" + str(i)
                     dict_firma[key] = StringVar(middle_screen_panel)
                     if event[j] == None:
@@ -315,7 +322,7 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
                     e.pack(side=LEFT)
                     e.insert(END, dict_firma[key].get())
                     e.config(state='disabled', justify='center', foreground=fgcolor, font=fgfont)
-                elif j == 5:
+                elif j == 5 and main_window.winfo_width() > 1500:
                     key = "entry_edit_time" + str(i)
                     dict_firma[key] = StringVar(middle_screen_panel)
                     if event[j] == None:
@@ -362,14 +369,16 @@ def Create_Table_Overtime_Emp(emp_id):
     e_ln.pack(side=LEFT)
     e_ln.insert(END, "Nazwisko")
     e_ln.config(state='disabled', justify='center', font=fgfont)
-    e_tm = ttk.Entry(dict_firma["frame0"], width=20)
-    e_tm.pack(side=LEFT)
-    e_tm.insert(END, "Dział")
-    e_tm.config(state='disabled', justify='center', font=fgfont)
-    e_ed = ttk.Entry(dict_firma["frame0"], width=13)
-    e_ed.pack(side=LEFT)
-    e_ed.insert(END, "Karta")
-    e_ed.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 1100:
+        e_tm = ttk.Entry(dict_firma["frame0"], width=20)
+        e_tm.pack(side=LEFT)
+        e_tm.insert(END, "Dział")
+        e_tm.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 1300:
+        e_ed = ttk.Entry(dict_firma["frame0"], width=13)
+        e_ed.pack(side=LEFT)
+        e_ed.insert(END, "Karta")
+        e_ed.config(state='disabled', justify='center', font=fgfont)
     e_et = ttk.Entry(dict_firma["frame0"], width=30)
     e_et.pack(side=LEFT)
     e_et.insert(END, "Stanowisko")
@@ -427,7 +436,7 @@ def Create_Table_Overtime_Emp(emp_id):
                 e.pack(side=LEFT)
                 e.insert(END, dict_firma[key].get())
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 3:
+            elif j == 3 and main_window.winfo_width() > 1100:
                 key = "emp_department" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -435,7 +444,7 @@ def Create_Table_Overtime_Emp(emp_id):
                 e.pack(side=LEFT)
                 e.insert(END, dict_firma[key].get())
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 4:
+            elif j == 4 and main_window.winfo_width() > 1300:
                 key = "emp_card" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j-1])
@@ -646,26 +655,31 @@ def Create_Table_Employees(department, rights_dict):
     e_tm.pack(side=LEFT)
     e_tm.insert(END, "Dział")
     e_tm.config(state='disabled', justify='center', font=fgfont)
-    e_ac = ttk.Entry(dict_firma["frame0"], width=12)
-    e_ac.pack(side=LEFT)
-    e_ac.insert(END, "Lokalizacja")
-    e_ac.config(state='disabled', justify='center', font=fgfont)
-    e_cm = ttk.Entry(dict_firma["frame0"], width=16)
-    e_cm.pack(side=LEFT)
-    e_cm.insert(END, "Teamleader")
-    e_cm.config(state='disabled', justify='center', font=fgfont)
-    e_ed = ttk.Entry(dict_firma["frame0"], width=13)
-    e_ed.pack(side=LEFT)
-    e_ed.insert(END, "Karta")
-    e_ed.config(state='disabled', justify='center', font=fgfont)
-    e_et = ttk.Entry(dict_firma["frame0"], width=15)
-    e_et.pack(side=LEFT)
-    e_et.insert(END, "Umowa")
-    e_et.config(state='disabled', justify='center', font=fgfont)
-    e_et = ttk.Entry(dict_firma["frame0"])
-    e_et.pack(side=LEFT)
-    e_et.insert(END, "Firma")
-    e_et.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 1500:
+        e_ac = ttk.Entry(dict_firma["frame0"], width=12)
+        e_ac.pack(side=LEFT)
+        e_ac.insert(END, "Lokalizacja")
+        e_ac.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 1300:
+        e_cm = ttk.Entry(dict_firma["frame0"], width=16)
+        e_cm.pack(side=LEFT)
+        e_cm.insert(END, "Teamleader")
+        e_cm.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 1100:
+        e_ed = ttk.Entry(dict_firma["frame0"], width=13)
+        e_ed.pack(side=LEFT)
+        e_ed.insert(END, "Karta")
+        e_ed.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 900:
+        e_et = ttk.Entry(dict_firma["frame0"], width=15)
+        e_et.pack(side=LEFT)
+        e_et.insert(END, "Umowa")
+        e_et.config(state='disabled', justify='center', font=fgfont)
+    if main_window.winfo_width() > 700:
+        e_et = ttk.Entry(dict_firma["frame0"])
+        e_et.pack(side=LEFT)
+        e_et.insert(END, "Firma")
+        e_et.config(state='disabled', justify='center', font=fgfont)
     e_et = ttk.Entry(dict_firma["frame0"])
     e_et.pack(side=LEFT)
     e_et.insert(END, "Stanowisko")
@@ -722,7 +736,7 @@ def Create_Table_Employees(department, rights_dict):
                 e.pack(side=LEFT)
                 e.insert(END, dep_dict[int(dict_firma[key].get())])
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 4:
+            elif j == 4 and main_window.winfo_width() > 1500:
                 key = "emp_city" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -730,7 +744,7 @@ def Create_Table_Employees(department, rights_dict):
                 e.pack(side=LEFT)
                 e.insert(END, city_dict[int(dict_firma[key].get())])
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 5:
+            elif j == 5 and main_window.winfo_width() > 1300:
                 key = "emp_tl" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -741,7 +755,7 @@ def Create_Table_Employees(department, rights_dict):
                 except:
                     e.insert(END, "Nie dotyczy")
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 6:
+            elif j == 6 and main_window.winfo_width() > 1100:
                 key = "emp_card" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -749,7 +763,7 @@ def Create_Table_Employees(department, rights_dict):
                 e.pack(side=LEFT)
                 e.insert(END, dict_firma[key].get())
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 7:
+            elif j == 7 and main_window.winfo_width() > 900:
                 key = "emp_agr" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -757,7 +771,7 @@ def Create_Table_Employees(department, rights_dict):
                 e.pack(side=LEFT)
                 e.insert(END, agr_dict[int(dict_firma[key].get())])
                 e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
-            elif j == 8:
+            elif j == 8 and main_window.winfo_width() > 700:
                 key = "emp_cmp" + str(i)
                 dict_firma[key] = StringVar(middle_screen_panel)
                 dict_firma[key].set(event[j])
@@ -894,7 +908,7 @@ try:
     cal_to = Calendar(right_panel, selectmode='day', year=int(yearmonthday[0:4]),month=int(yearmonthday[5:7]),date=int(yearmonthday[8:10]))
     cal_to.selection_set(date(int(yearmonthday[0:4]),int(yearmonthday[5:7]),int(yearmonthday[8:10])))
 
-    ttk.Label(right_panel, text="Data OD:", font=("Arial", 13, 'bold')).pack(side=TOP)
+    ttk.Label(right_panel, text="Excel / Data OD:", font=("Arial", 13, 'bold')).pack(side=TOP)
     cal_from.pack(side=TOP)
     ttk.Separator(right_panel, orient='horizontal').pack(fill='x', pady=5)
     ttk.Label(right_panel, text="Data DO:", font=("Arial", 13, 'bold')).pack(side=TOP)
@@ -905,7 +919,9 @@ try:
     the_choosen_one.pack(side=TOP, fill=BOTH, expan=False)
     act_button = ttk.Button(right_panel, text='Aktualizuj\nobecność', command=lambda: Create_Table_Presence(selected_emp_id.get(), selected_emp_fname.get(), selected_emp_lname.get(), Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
     act_button.pack(side=TOP, fill=BOTH, expan=False, pady=5)
-
+    exc_button = ttk.Button(right_panel, text='                 Szybki Excel\n  (Aktualnie wybrany pracownik)', command=lambda: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), employee=selected_emp_id.get()), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+    exc_button.pack(side=TOP, fill=BOTH, expan=False, pady=5)
+    
     if intversion(version, update_version) == True:
         s = ttk.Style()
         s.configure('my.TButton', font=('Arial', 16, 'bold'), focusthickness=10, focuscolor='red', background='chartreuse4')
@@ -923,7 +939,7 @@ try:
     ent_exit_btn = ttk.Button(right_panel, text='Dodaj wejście/wyjście', command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname: Add_EntryExit(selected_emp, emp_id.get(), unam, Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
     ent_exit_btn.pack(side=BOTTOM, fill=BOTH, expan=False, pady=5)
     ttk.Separator(right_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
-
+    
     
 except:
     pass
@@ -981,7 +997,14 @@ def Create_Menu():
             new_menu.add_command(label=(x[1] + " " + x[2]), command=lambda emp_id=x[0]:Create_Table_Overtime_Emp(emp_id))
     overtime_menu.add_cascade(label="Pracownik", menu=ov_emp_menu)
     overtime_menu.add_command(label="Wszyscy", command=lambda: Create_Table_Overtime_Dep(2468642))
-
+    
+    excel_menu = Menu(menubar, tearoff=0)
+    for item in rights_dict['departments']:
+        excel_menu.add_command(label=dep_dict[int(item)], command=lambda department=int(item), conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), department=department), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+    if rights_dict['uprawnienia'] == 777:
+        excel_menu.add_command(label="PŁOŃSK", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=1), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+        excel_menu.add_command(label="WARSZAWA", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=2), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+    menubar.add_cascade(label="Excel", menu=excel_menu)
 
     help_menu = Menu(menubar, tearoff=0)
     help_menu.add_command(label="Changelog", command=lambda: Changelog())
@@ -992,3 +1015,4 @@ def Create_Menu():
 
     main_window.config(menu=menubar)
     main_window.state('zoomed')
+    

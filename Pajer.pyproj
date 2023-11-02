@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="excel_fun\free_days.py" />
+    <Compile Include="excel_fun\random_fun.py" />
+    <Compile Include="excel_fun\presence.py" />
     <Compile Include="fnct\getpath.py" />
     <Compile Include="fnct\iseven.py" />
     <Compile Include="fnct\free_days.py" />
@@ -36,6 +39,7 @@
   <ItemGroup>
     <Folder Include="login_form\" />
     <Folder Include="fnct\" />
+    <Folder Include="excel_fun\" />
     <Folder Include="rcp\" />
     <Folder Include="rcp\img\" />
     <Folder Include="rcp\log\" />
