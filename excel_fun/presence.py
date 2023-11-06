@@ -83,7 +83,10 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
     
     workbook.add_worksheet("Spis treści")
     workbook.add_vba_project('vbaProject.bin')
-    
+    if month == 1:
+        prev_month = 12
+    else:
+        prev_month = month - 1
     
     hyperlink_count = 1
     for key, value in pres_dict.items():
@@ -95,7 +98,10 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         agreement = agr_dict[value[5]]
         company = company_dict[value[6]]
         position = pos_dict[value[7]]
-        overtime_previous = value[9][0][1]
+        try:
+            overtime_previous = value[9][0][1]
+        except:
+            overtime_previous = 666
         
         worksheet = workbook.get_worksheet_by_name("Spis treści")
         worksheet.write_url('A' + str(hyperlink_count), "internal:'" + lname + " " + fname + "'!A1", string = lname + " " + fname)
@@ -106,8 +112,12 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         worksheet.write(1, 0, agreement)
         worksheet.write(1, 1, company)
         worksheet.write(0, 1, position)
-        worksheet.write(0, 2, "Nadgodziny:")
-        worksheet.write(1, 2, overtime_previous)
+        worksheet.write(0, 2, "Nadgodziny %s:" % Month_to_String(prev_month))
+        if overtime_previous != 666:
+            worksheet.write(1, 2, overtime_previous)
+        else:
+            worksheet.write(1, 2, "Brak danych - ustawiam 0")
+            overtime_previous = 0
         worksheet.write(3, 0, "Dzień:")
         worksheet.write(3, 1, "Wejście:")
         worksheet.write(3, 2, "Wyjście:")
@@ -174,25 +184,23 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         worksheet.write(i+5, 6, int(str(expected_total_time)))
         if value[2] == 1: #PALACZ
             worksheet.write(i+5, 7, "Palacz (+4)", red_cell)
-        if month == 1:
-            prev_month = 12
-        else:
-            prev_month = month - 1
         worksheet.write(i+6, 4, "+%s (%s)" % (Month_to_String(prev_month), overtime_previous))
         worksheet.write(i+6, 5, total_total_hours + overtime_previous)
         worksheet.write(i+7, 4, "Nadgodziny:")
         worksheet.write(i+7, 5, total_total_hours - int(str(expected_total_time)))
-        worksheet.write(i+8, 4, "Razem:")
-        worksheet.write(i+8, 5, total_total_hours + overtime_previous + (total_total_hours - int(str(expected_total_time))))
+        worksheet.write(i+8, 4, "Nadgodziny razem:")
+        worksheet.write(i+8, 5, overtime_previous + total_total_hours - expected_total_time)
+        worksheet.write(i+9, 4, "Razem:")
+        worksheet.write(i+9, 5, total_total_hours + overtime_previous + (total_total_hours - int(str(expected_total_time))))
         worksheet.insert_button(
-       'H%s' % str(i+9),
+       'G%s' % str(i+9),
             {
-                'macro': "'update_db \"%s\", Evaluate(\"F%s\")'" % (str(key), str(i+9)),
-                'caption': 'Aktualizuj\nnadgodziny',
-                'width': 80, 'height': 50
+                'macro': "'update_db \"%s\", Evaluate(\"F%s\"), \"%s\"'" % (str(key), str(i+9), str(year) + "-" + str(Number_to_String(month))),
+                'caption': 'Aktualizuj nadgodziny',
+                'width': 200, 'height': 20
             }
         )
-        print("'update_db \"%s\", Evaluate(\"F%s\")'" % (str(key), str(i+9)))
+        #print("'update_db \"%s\", Evaluate(\"F%s\"), \"%s\"'" % (str(key), str(i+9), (str(year) + "-" + str(Number_to_String(month)))))
         worksheet.autofit()
         hyperlink_count+=1
 

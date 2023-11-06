@@ -11,10 +11,11 @@ from PIL import Image, ImageTk
 import os
 
 current_directory = Get_Local_Path()
+print("as")
 global rights_dict
 rights_dict = {}
 global version
-version = '1.2.0'
+version = '1.2.1'
 
 def refresh(self):
     self.destroy()

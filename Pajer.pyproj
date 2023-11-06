@@ -29,6 +29,8 @@
     <Compile Include="fnct\free_days.py" />
     <Compile Include="fnct\check_time.py" />
     <Compile Include="login_form\login_form.py" />
+    <Compile Include="exe\setup.py" />
+    <Compile Include="exe\update_db.py" />
     <Compile Include="Pajer.py" />
     <Compile Include="rcp\readrs.py" />
     <Compile Include="rcp\wol.py" />
@@ -40,6 +42,7 @@
     <Folder Include="login_form\" />
     <Folder Include="fnct\" />
     <Folder Include="excel_fun\" />
+    <Folder Include="exe\" />
     <Folder Include="rcp\" />
     <Folder Include="rcp\img\" />
     <Folder Include="rcp\log\" />
