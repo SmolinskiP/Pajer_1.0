@@ -20,6 +20,7 @@ def Create_Free_days():
     weekends.append("2022-11-11")
     weekends.append("2022-12-25")
     weekends.append("2022-12-26")
+    weekends.append("2023-06-08")
     weekends.append("2023-01-06")
     weekends.append("2023-04-10")
     weekends.append("2023-05-01")

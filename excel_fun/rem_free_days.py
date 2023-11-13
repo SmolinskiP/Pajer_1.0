@@ -7,7 +7,7 @@ def Create_Free_days():
     weekdays = [5,6]
     weekends = []
     start_dt = date(2021,1,1)
-    end_dt = date(2023,12,30)
+    end_dt = date(2024,12,30)
     for dt in daterange(start_dt, end_dt):
         if dt.weekday() in weekdays:
             weekends.append(dt.strftime("%Y-%m-%d"))
@@ -30,4 +30,14 @@ def Create_Free_days():
     weekends.append("2023-11-01")
     weekends.append("2023-12-25")
     weekends.append("2023-12-26")
+    weekends.append("2024-01-01")
+    weekends.append("2024-04-01")
+    weekends.append("2024-05-01")
+    weekends.append("2024-05-03")
+    weekends.append("2024-05-30")
+    weekends.append("2024-08-15")
+    weekends.append("2024-11-01")
+    weekends.append("2024-11-11")
+    weekends.append("2024-12-25")
+    weekends.append("2024-12-26")
     return weekends

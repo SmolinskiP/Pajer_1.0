@@ -1,6 +1,6 @@
 ﻿import mysql.connector as database
 import xlsxwriter, calendar
-from excel_fun.free_days import Create_Free_days
+from fnct.free_days import Create_Free_days
 from excel_fun.random_fun import Number_to_String, Generate_Overtime, Expected_Time, Month_to_String, Cell_Type_Entry_Exit
 from time import strftime
 import os, math
@@ -95,6 +95,7 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
     red_time_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'red', 'bold': True, 'num_format': 'hh:mm:ss'})
     orange_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'orange', 'bold': True})
     orange_time_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'orange', 'bold': True, 'num_format': 'hh:mm:ss'})
+    yellow_time_cell = workbook.add_format({'font_color': 'black', 'bg_color': 'yellow', 'bold': True, 'num_format': 'hh:mm:ss'})
     green_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'green', 'bold': True})
     black_cell = workbook.add_format({'font_color': 'black'})
     time_cell = workbook.add_format({'num_format': 'hh:mm:ss'})
@@ -108,6 +109,8 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
             return orange_time_cell
         elif i == 2:
             return red_time_cell
+        elif i == 3:
+            return yellow_time_cell
     
     workbook.add_worksheet("Spis treści")
     workbook.add_vba_project('vbaProject.bin')
@@ -178,15 +181,15 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
                         worksheet.write(i+3, 3, item[3])
                     if item[1] == 1:
                         entry_dict[actual_date] = item[2]
-                    elif item[1] == 2:
-                        
-                        exit_dict[actual_date] = item[2]
                         worksheet.write(i+3, 1, entry_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(entry_dict[actual_date].strftime("%H")), int(entry_dict[actual_date].strftime("%M")), "entry")))
+                    elif item[1] == 2:
+                        exit_dict[actual_date] = item[2]
                         worksheet.write(i+3, 2, exit_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(exit_dict[actual_date].strftime("%H")), int(exit_dict[actual_date].strftime("%M")), "exit")))
                         
                         total_time, total_hours = Generate_Overtime(key, agreement, entry_dict[actual_date], exit_dict[actual_date])
                         total_total_time += total_time
                         total_total_hours += total_hours
+                        #print("DODAJE %s nadgodzin poniewaz akcja to %s - data %s" % (total_total_hours, item[1], actual_date))
                         
                         if len(str(total_time)) == 7:
                             total_time_for_cell_h = int(str(total_time)[:1])
@@ -206,6 +209,7 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
                         worksheet.write(i+3, 5, expected_time)
                         worksheet.write(i+3, 6, expected_time)
                         total_total_hours += expected_time
+                        #print("DODAJE %s nadgodzin poniewaz akcja to %s - data %s" % (total_total_hours, item[1], actual_date))
                         total_total_time += timedelta(hours=expected_time)
                     else:
                         worksheet.write(i+3, 2, action_dict[item[1]], red_cell)
