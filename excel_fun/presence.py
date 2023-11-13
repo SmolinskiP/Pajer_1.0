@@ -1,7 +1,7 @@
 ﻿import mysql.connector as database
 import xlsxwriter, calendar
 from excel_fun.free_days import Create_Free_days
-from excel_fun.random_fun import Number_to_String, Generate_Overtime, Expected_Time, Month_to_String
+from excel_fun.random_fun import Number_to_String, Generate_Overtime, Expected_Time, Month_to_String, Cell_Type_Entry_Exit
 from time import strftime
 import os, math
 from datetime import datetime, timedelta
@@ -18,19 +18,19 @@ def Create_Presence_Dict(conn, year, month, localization=0, department=0, employ
         get_sql.execute(sql_query)
         sql_result = get_sql.fetchall()
         for item in sql_result:
-            employee_dict[item[0]] = [item[1], item[2], item[3], localization, item[4], item[5], item[6], item[7], [], []]
+            employee_dict[item[0]] = [item[1], item[2], item[3], localization, item[4], item[5], item[6], item[7], [], [], []]
     elif department != 0:
         sql_query = "SELECT id, imie, nazwisko, palacz, lokalizacja, umowa, firma, stanowisko FROM pracownicy WHERE active = 1 AND dzial = %s ORDER BY nazwisko" % department
         get_sql.execute(sql_query)
         sql_result = get_sql.fetchall()
         for item in sql_result:
-            employee_dict[item[0]] = [item[1], item[2], item[3], item[4], department, item[5], item[6], item[7], [], []]
+            employee_dict[item[0]] = [item[1], item[2], item[3], item[4], department, item[5], item[6], item[7], [], [], []]
     elif employee != 0:
         sql_query = "SELECT id, imie, nazwisko, palacz, lokalizacja, dzial, umowa, firma, stanowisko FROM pracownicy WHERE active = 1 AND id = %s" % employee
         get_sql.execute(sql_query)
         sql_result = get_sql.fetchall()
         for item in sql_result:
-            employee_dict[item[0]] = [item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], [], []]
+            employee_dict[item[0]] = [item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], [], [], []]
         
     sql_query = "SELECT pracownik, action, time , komentarz FROM obecnosc WHERE pracownik IN ("
     for key, item in employee_dict.items():
@@ -46,6 +46,24 @@ def Create_Presence_Dict(conn, year, month, localization=0, department=0, employ
         for key, value in employee_dict.items():
             if item[0] == key:
                 employee_dict[key][8].append(item)
+    
+                
+    sql_query = "SELECT pracownik, nadgodziny FROM nadgodziny WHERE pracownik IN ("
+    for key, item in employee_dict.items():
+        sql_query += "%s, " % key
+    sql_query = sql_query[:-2]
+    month = int(month)
+    if month < 10:
+        month = "0" + str(month)
+    sql_query += ") AND data LIKE '%s%%' ORDER BY pracownik, data" % (str(year) + "-" + str(month))
+    print(sql_query)
+    get_sql.execute(sql_query)
+    sql_result = get_sql.fetchall()
+
+    for item in sql_result:
+        for key, value in employee_dict.items():
+            if item[0] == key:
+                employee_dict[key][10].append(item)
                 
     sql_query = "SELECT pracownik, nadgodziny FROM nadgodziny WHERE pracownik IN ("
     for key, item in employee_dict.items():
@@ -66,6 +84,7 @@ def Create_Presence_Dict(conn, year, month, localization=0, department=0, employ
         for key, value in employee_dict.items():
             if item[0] == key:
                 employee_dict[key][9].append(item)
+                
         
     return employee_dict
 
@@ -73,13 +92,22 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
     #print(pres_dict)
     workbook = xlsxwriter.Workbook(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
     red_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'red', 'bold': True})
+    red_time_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'red', 'bold': True, 'num_format': 'hh:mm:ss'})
     orange_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'orange', 'bold': True})
+    orange_time_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'orange', 'bold': True, 'num_format': 'hh:mm:ss'})
     green_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'green', 'bold': True})
     black_cell = workbook.add_format({'font_color': 'black'})
     time_cell = workbook.add_format({'num_format': 'hh:mm:ss'})
     white_cell = workbook.add_format({'font_color': 'white'})
     days_in_month = calendar.monthrange(year, month)[1]
     weekends = Create_Free_days()
+    def Cell_Choose(i):
+        if i == 0:
+            return time_cell
+        elif i == 1:
+            return orange_time_cell
+        elif i == 2:
+            return red_time_cell
     
     workbook.add_worksheet("Spis treści")
     workbook.add_vba_project('vbaProject.bin')
@@ -102,6 +130,10 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
             overtime_previous = value[9][0][1]
         except:
             overtime_previous = 666
+        try:
+            overtime_actual = value[10][0][1]
+        except:
+            overtime_actual = "Brak danych"
         
         worksheet = workbook.get_worksheet_by_name("Spis treści")
         worksheet.write_url('A' + str(hyperlink_count), "internal:'" + lname + " " + fname + "'!A1", string = lname + " " + fname)
@@ -118,6 +150,8 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         else:
             worksheet.write(1, 2, "Brak danych - ustawiam 0")
             overtime_previous = 0
+        worksheet.write(0, 3, "Nadgodziny %s:" % Month_to_String(month))
+        worksheet.write(1, 3, overtime_actual)
         worksheet.write(3, 0, "Dzień:")
         worksheet.write(3, 1, "Wejście:")
         worksheet.write(3, 2, "Wyjście:")
@@ -143,17 +177,25 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
                     if item[3] != None:
                         worksheet.write(i+3, 3, item[3])
                     if item[1] == 1:
-                        worksheet.write(i+3, 1, item[2].strftime("%H:%M:%S"), time_cell)
                         entry_dict[actual_date] = item[2]
                     elif item[1] == 2:
-                        worksheet.write(i+3, 2, item[2].strftime("%H:%M:%S"), time_cell)
+                        
                         exit_dict[actual_date] = item[2]
+                        worksheet.write(i+3, 1, entry_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(entry_dict[actual_date].strftime("%H")), int(entry_dict[actual_date].strftime("%M")), "entry")))
+                        worksheet.write(i+3, 2, exit_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(exit_dict[actual_date].strftime("%H")), int(exit_dict[actual_date].strftime("%M")), "exit")))
                         
                         total_time, total_hours = Generate_Overtime(key, agreement, entry_dict[actual_date], exit_dict[actual_date])
                         total_total_time += total_time
                         total_total_hours += total_hours
                         
-                        worksheet.write(i+3, 4, str(total_time), time_cell)
+                        if len(str(total_time)) == 7:
+                            total_time_for_cell_h = int(str(total_time)[:1])
+                            total_time_for_cell_m = int(str(total_time)[2:4])
+                        elif len(str(total_time)) == 8:
+                            total_time_for_cell_h = int(str(total_time)[:2])
+                            total_time_for_cell_m = int(str(total_time)[3:5])
+                            
+                        worksheet.write(i+3, 4, str(total_time), Cell_Choose(Cell_Type_Entry_Exit(key, total_time_for_cell_h, total_time_for_cell_m, "total")))
                         worksheet.write(i+3, 5, total_hours)
                         worksheet.write(i+3, 6, expected_time)
                     elif item[1] == 3 or item[1] == 4:
