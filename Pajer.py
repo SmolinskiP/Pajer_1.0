@@ -949,6 +949,11 @@ try:
         s.map('my.TButton', background=[('active', '#ff0000')])
         update_button = ttk.Button(right_panel, text='Dostępne aktualizacje!', style='my.TButton', command=lambda main_wnd=main_window, version=version, update_version=update_version: Update_App(main_wnd, version, update_version))
         update_button.pack(side=BOTTOM, pady=30, padx=60, fill=BOTH, expand=True)
+    else:
+        imgpath_pda = current_directory + "\img\logo.png"
+        logo_pda = PhotoImage(file=imgpath_pda)
+        actualization_label = Label(right_panel, image = logo_pda)
+        actualization_label.pack(fill=X, pady=50)
 
     ttk.Separator(random_buttons_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
     break_btn = ttk.Button(random_buttons_panel, text='Dodaj przerwę', command=lambda selected_emp=selected_emp, emp_id=selected_emp_id, unam=uname:Add_Break(selected_emp, emp_id.get(), unam))
