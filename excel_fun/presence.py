@@ -7,9 +7,11 @@ import os, math
 from datetime import datetime, timedelta
 
 
-def Create_Presence_Dict(conn, year, month, localization=0, department=0, employee=0):
+def Create_Presence_Dict(connection_dict, conn, year, month, localization=0, department=0, employee=0):
+    print(connection_dict)
     print("Generuję plik Excel do: %s" % os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
     print("Parametry pliku:\nRok: %s\nMiesiąc: %s\nLokalizacja: %s\nDział: %s\nPracownik: %s\n" % (year, month, localization, department, employee))
+    conn = database.connect(user = connection_dict['login'], password = connection_dict['password'], host = connection_dict['host'], database = connection_dict['db'], port = connection_dict['port'])
     get_sql = conn.cursor()
     employee_dict = {}
     

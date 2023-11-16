@@ -938,7 +938,7 @@ try:
     ttk.Separator(current_employee_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
     act_button = ttk.Button(current_employee_panel, text='Aktualizuj\nobecność', command=lambda: Create_Table_Presence(selected_emp_id.get(), selected_emp_fname.get(), selected_emp_lname.get(), Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
     act_button.pack(side=BOTTOM, fill=BOTH, expan=False, pady=5)
-    exc_button = ttk.Button(current_employee_panel, text='                 Szybki Excel\n  (Aktualnie wybrany pracownik)', command=lambda: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), employee=selected_emp_id.get()), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+    exc_button = ttk.Button(current_employee_panel, text='                 Szybki Excel\n  (Aktualnie wybrany pracownik)', command=lambda: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), employee=selected_emp_id.get()), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
     ttk.Separator(current_employee_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
     exc_button.pack(side=BOTTOM, fill=BOTH, expan=False, pady=8)
     
@@ -1026,10 +1026,10 @@ def Create_Menu():
     
     excel_menu = Menu(menubar, tearoff=0)
     for item in rights_dict['departments']:
-        excel_menu.add_command(label=dep_dict[int(item)], command=lambda department=int(item), conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), department=department), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+        excel_menu.add_command(label=dep_dict[int(item)], command=lambda department=int(item), conn=conn: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), department=department), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
     if rights_dict['uprawnienia'] == 777:
-        excel_menu.add_command(label="PŁOŃSK", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=1), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
-        excel_menu.add_command(label="WARSZAWA", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=2), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+        excel_menu.add_command(label="PŁOŃSK", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=1), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+        excel_menu.add_command(label="WARSZAWA", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=2), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
     menubar.add_cascade(label="Excel", menu=excel_menu)
 
     help_menu = Menu(menubar, tearoff=0)
