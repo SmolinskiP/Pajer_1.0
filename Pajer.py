@@ -938,7 +938,7 @@ try:
     ttk.Separator(current_employee_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
     act_button = ttk.Button(current_employee_panel, text='Aktualizuj\nobecność', command=lambda: Create_Table_Presence(selected_emp_id.get(), selected_emp_fname.get(), selected_emp_lname.get(), Get_Date_From_Callendar(cal_from), Get_Date_From_Callendar(cal_to)))
     act_button.pack(side=BOTTOM, fill=BOTH, expan=False, pady=5)
-    exc_button = ttk.Button(current_employee_panel, text='                 Szybki Excel\n  (Aktualnie wybrany pracownik)', command=lambda: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), employee=selected_emp_id.get()), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
+    exc_button = ttk.Button(current_employee_panel, text='                 Szybki Excel\n  (Aktualnie wybrany pracownik)', command=lambda: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), employee=selected_emp_id.get()), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict, just_worker=1))
     ttk.Separator(current_employee_panel, orient='horizontal').pack(fill='x', pady=5, side=BOTTOM)
     exc_button.pack(side=BOTTOM, fill=BOTH, expan=False, pady=8)
     

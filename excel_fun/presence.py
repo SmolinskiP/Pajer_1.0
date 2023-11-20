@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 def Create_Presence_Dict(connection_dict, conn, year, month, localization=0, department=0, employee=0):
     print(connection_dict)
-    print("Generuję plik Excel do: %s" % os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
+    print("Generuję plik Excel do: %s" % os.path.join(os.path.expanduser('~'), "Documents", ""))
     print("Parametry pliku:\nRok: %s\nMiesiąc: %s\nLokalizacja: %s\nDział: %s\nPracownik: %s\n" % (year, month, localization, department, employee))
     conn = database.connect(user = connection_dict['login'], password = connection_dict['password'], host = connection_dict['host'], database = connection_dict['db'], port = connection_dict['port'])
     get_sql = conn.cursor()
@@ -90,9 +90,12 @@ def Create_Presence_Dict(connection_dict, conn, year, month, localization=0, dep
         
     return employee_dict
 
-def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict):
+def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict, just_worker=0):
     #print(pres_dict)
-    workbook = xlsxwriter.Workbook(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
+    if just_worker == 0:
+        workbook = xlsxwriter.Workbook(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
+    else:
+        workbook = xlsxwriter.Workbook(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc_%s.xlsm" % list(pres_dict.keys())[0]))
     red_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'red', 'bold': True})
     red_time_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'red', 'bold': True, 'num_format': 'hh:mm:ss'})
     orange_cell = workbook.add_format({'font_color': 'white', 'bg_color': 'orange', 'bold': True})
@@ -205,7 +208,7 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
                         worksheet.write(i+3, 6, expected_time)
                     elif item[1] == 3 or item[1] == 4:
                         continue
-                    elif item[1] in (5, 7, 8, 10, 12, 13, 14, 15, 17, 18, 22, 23, 24, 25, 26):
+                    elif item[1] in (5, 7, 8, 10, 12, 13, 14, 15, 17, 18, 19, 22, 23, 24, 25, 26):
                         worksheet.write(i+3, 2, action_dict[item[1]], green_cell)
                         worksheet.write(i+3, 4, "%s:00:00" % expected_time, time_cell)
                         worksheet.write(i+3, 5, expected_time)
@@ -253,5 +256,9 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         hyperlink_count+=1
 
     workbook.close()
-    os.startfile(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
+    
+    if just_worker == 0:
+        os.startfile(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc.xlsm"))
+    else:
+        os.startfile(os.path.join(os.path.expanduser('~'), "Documents", "Obecnosc_%s.xlsm" % list(pres_dict.keys())[0]))
 
