@@ -945,8 +945,8 @@ try:
     
     if intversion(version, update_version) == True:
         s = ttk.Style()
-        s.configure('my.TButton', font=('Arial', 16, 'bold'), focusthickness=10, focuscolor='red', background='chartreuse4')
-        s.map('my.TButton', background=[('active', '#ff0000')])
+        s.configure('my.TButton', font=('Arial', 26, 'bold'), focusthickness=10, focuscolor='red', background='chartreuse4')
+        s.map('my.TButton', background=[("active", "green"), ("!active", "red")], foreground = [("active", "green"), ("!active", "red")])
         update_button = ttk.Button(right_panel, text='Dostępne aktualizacje!', style='my.TButton', command=lambda main_wnd=main_window, version=version, update_version=update_version: Update_App(main_wnd, version, update_version))
         update_button.pack(side=BOTTOM, pady=30, padx=60, fill=BOTH, expand=True)
     else:
