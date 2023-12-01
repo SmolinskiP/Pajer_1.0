@@ -3,7 +3,7 @@ from tkinter import messagebox
 import mysql.connector as database
 import tkinter.ttk as ttk
 from tkinter.messagebox import askyesno
-from sql.db_data_functions import Delete_SQL, Add_Break_SQL, Get_Hash, Change_Password_SQL, Add_EntryExit_SQL, Add_Holiday_SQL, Create_Dict, Add_Random_Entry_SQL, Get_Single_Emp, Edit_Emp_Data, Get_Right, Delete_Emp_SQL, Add_Comment_SQL, Add_Emp_SQL, Get_Name, Send_Overtime
+from sql.db_data_functions import Delete_SQL, Add_Break_SQL, Get_Hash, Change_Password_SQL, Add_EntryExit_SQL, Add_Holiday_SQL, Create_Dict, Add_Random_Entry_SQL, Get_Single_Emp, Edit_Emp_Data, Get_Right, Delete_Emp_SQL, Add_Comment_SQL, Add_Emp_SQL, Get_Name, Send_Overtime, Edit_User_Data, Remove_DB_User, Reset_Password
 from tkinter import *
 import tkinter.ttk as ttk
 from fnct.getpath import Get_Local_Path
@@ -858,6 +858,178 @@ def Edit_Employee_Overtime(emp_id, ent_id, rights_dict):
     ttk.Separator(wnd, orient='horizontal').pack(fill='x', pady=20)
     ttk.Label(wnd, text="Wybrany pracownik:", font=("Arial", 13, 'bold')).pack(side=TOP)
     ttk.Label(wnd, text=Get_Name(emp_id), font=("Arial", 13)).pack(side=TOP, pady=3)
+
+def Edit_User(emp_id, emp_login, emp_admin, emp_deps, emp_rem_emp, emp_add_emp, emp_rem_ent, emp_add_ent, emp_id_db, emp_tl, dep_list, dep_dict, state=0):
+    
+    tl_dict = Create_Dict("_team", "teamleader")
+    tl_dict_rev = dict(map(reversed, tl_dict.items()))
+    tl_list = []
+    for key in tl_dict:
+        tl_list.append(tl_dict[key])
+    dep_dict = Create_Dict("_dzial", "dzial")
+    dep_dict_rev = dict(map(reversed, dep_dict.items()))
+    dep_list = []
+    for key in dep_dict:
+        dep_list.append(dep_dict[key])
+        
+    wnd = Toplevel()
+    wnd.resizable(False, False)
+    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    if state == 0:
+        wnd.title("Edycja użytkowników")
+    else:
+        wnd.title("Dodaj użytkownika")
+    wnd.lift()
+    wnd.attributes("-topmost", True)
+    
+    yesno_list = ["TAK", "NIE"]
+    
+    maintopframe = Frame(wnd)
+    maindwnframe = Frame(wnd)
+    topleftframe = Frame(maintopframe)
+    toprightframe = Frame(maintopframe)
+    
+    s = ttk.Style()
+    s.configure('my.TButton', font=('Arial', 12, 'bold'), focusthickness=3, focuscolor='none')
+    s.configure("my.TMenubutton", font=('Arial', 12, 'bold'))
+    
+    maintopframe.pack(side=TOP, expand=True, fill="both")
+    entry_top = ttk.Entry(maintopframe)
+    entry_top.pack(side=TOP, padx=150, pady=30)
+    if state == 0:
+        entry_top.insert(END, "%s - %s" % (emp_id, emp_login))
+    else:
+        entry_top.insert(END, "Podaj login:")
+        user_login = ttk.Entry(maintopframe)
+        user_login.pack(side=TOP, padx=150, pady=10)
+        user_login.config(justify='center', font=("Arial", 15, 'bold'))
+        entry_top2 = ttk.Entry(maintopframe)
+        entry_top2.pack(side=TOP, padx=50, pady=10, fill='x', expand=True)
+        entry_top2.insert(END, "Podaj id pracownika w bazie")
+        entry_top2.config(state='disabled', justify='center', font=("Arial", 15, 'bold'))
+        id_database = ttk.Entry(maintopframe)
+        id_database.pack(side=TOP, padx=150, pady=10)
+        id_database.config(justify='center', font=("Arial", 15, 'bold'))
+        ttk.Separator(maintopframe, orient='horizontal').pack(fill='x', pady=15)
+    entry_top.config(state='disabled', justify='center', font=("Arial", 15, 'bold'))
+    ttk.Label(maintopframe, text="ADMIN", font=("Arial", 13, 'bold')).pack()
+    is_emp_admin = StringVar()
+    if emp_admin == '777':
+        emp_admin = "TAK"
+    else:
+        emp_admin = "NIE"
+    choose_admin = ttk.OptionMenu(maintopframe, is_emp_admin, emp_admin, *yesno_list, style='my.TMenubutton')
+    choose_admin.pack(side=TOP, pady=10)
+    ttk.Separator(maintopframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    maindwnframe.pack(side=TOP, expand=True, fill="both")
+    topleftframe.pack(side=LEFT, expand=True, fill="both")
+    toprightframe.pack(side=RIGHT, expand=True, fill="both")
+    
+    
+
+    
+    ttk.Label(topleftframe, text="Usuwanie pracowników", font=("Arial", 13, 'bold')).pack()
+    rem_emp = StringVar()
+    if emp_rem_emp == '1':
+        emp_rem_emp = "TAK"
+    else:
+        emp_rem_emp = "NIE"
+    choose_admin = ttk.OptionMenu(topleftframe, rem_emp, emp_rem_emp, *yesno_list, style='my.TMenubutton')
+    choose_admin.pack(side=TOP, pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    ttk.Label(toprightframe, text="Dodawanie pracowników", font=("Arial", 13, 'bold')).pack()
+    add_emp = StringVar()
+    if emp_add_emp == '1':
+        emp_add_emp = "TAK"
+    else:
+        emp_add_emp = "NIE"
+    choose_admin = ttk.OptionMenu(toprightframe, add_emp, emp_add_emp, *yesno_list, style='my.TMenubutton')
+    choose_admin.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    ttk.Label(topleftframe, text="Usuwanie wpisów", font=("Arial", 13, 'bold')).pack()
+    rem_ent = StringVar()
+    if emp_rem_ent == '1':
+        emp_rem_ent = "TAK"
+    else:
+        emp_rem_ent = "NIE"
+    choose_admin = ttk.OptionMenu(topleftframe, rem_ent, emp_rem_ent, *yesno_list, style='my.TMenubutton')
+    choose_admin.pack(side=TOP, pady=10)
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    ttk.Label(toprightframe, text="Dodawanie wpisów", font=("Arial", 13, 'bold')).pack()
+    add_ent = StringVar()
+    if emp_add_ent == '1':
+        emp_add_ent = "TAK"
+    else:
+        emp_add_ent = "NIE"
+    choose_admin = ttk.OptionMenu(toprightframe, add_ent, emp_add_ent, *yesno_list, style='my.TMenubutton')
+    choose_admin.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    ttk.Label(topleftframe, text="Działy", font=("Arial", 13, 'bold')).pack()
+    emp_dep = StringVar()
+    
+    choose_dep = Listbox(topleftframe, selectmode = "multiple")
+    choose_dep.pack(side=TOP, pady=10)
+    for item in range(len(dep_list)):
+        choose_dep.insert(END, dep_list[item])
+        choose_dep.itemconfig(item, bg = "bisque2" if item % 2 == 0 else "honeydew2") 
+    ttk.Separator(topleftframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    ttk.Label(toprightframe, text="TeamLeader", font=("Arial", 13, 'bold')).pack()
+    emp_tl = StringVar()
+    choose_tl = ttk.OptionMenu(toprightframe, emp_tl, tl_dict[5], *tl_list, style='my.TMenubutton')
+    choose_tl.pack(side=TOP, pady=10)
+    ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=15)
+    
+    def get_from_list():
+        temp_list = []
+        for i in choose_dep.curselection():
+            temp_list.append(choose_dep.get(i))
+        return temp_list
+    
+    sel_list = get_from_list()
+    print(sel_list)
+    if state == 0:
+        send_button = ttk.Button(maindwnframe, text="Edytuj użytkownika", style='my.TButton', command=lambda dep_dict = dep_dict, emp_id=emp_id, wnd=wnd: Edit_User_Data(emp_id, is_emp_admin.get(), emp_tl.get(), rem_emp.get(), add_emp.get(), rem_ent.get(), add_ent.get(), get_from_list(), wnd, dep_dict))
+    else:
+        send_button = ttk.Button(maindwnframe, text="Dodaj użytkownika", style='my.TButton', command=lambda dep_dict = dep_dict, emp_id=emp_id, wnd=wnd: Edit_User_Data(emp_id, is_emp_admin.get(), emp_tl.get(), rem_emp.get(), add_emp.get(), rem_ent.get(), add_ent.get(), get_from_list(), wnd, dep_dict, user_login.get(), id_database.get()))
+    send_button.pack(pady=30, ipady=10, ipadx=10)
+    
+def Remove_User(emp_id):
+    answer = askyesno("Potwierdzenie", "Operacja nieodwracalna! Kontynuować?")
+    if answer == True:
+        Remove_DB_User(emp_id)
+        
+def Reset_User_Password(emp_id):
+    wnd = Toplevel()
+    wnd.resizable(False, False)
+    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.title("Resetowanie hasła")
+    wnd.lift()
+    wnd.attributes("-topmost", True)
+
+    maintopframe = Frame(wnd)
+    s = ttk.Style()
+    s.configure('my.TButton', font=('Arial', 12, 'bold'), focusthickness=3, focuscolor='none')
+    s.configure("my.TMenubutton", font=('Arial', 12, 'bold'))
+    maintopframe.pack(side=TOP, expand=True, fill="both")
+    
+    entry_top = ttk.Entry(maintopframe)
+    entry_top.pack(side=TOP, padx=150, pady=30)
+    entry_top.insert(END, "Podaj nowe hasło:")
+    entry_top.config(state='disabled', justify='center', font=("Arial", 15, 'bold'))
+    
+    user_password = ttk.Entry(maintopframe)
+    user_password.pack(side=TOP, padx=150, pady=30)
+    user_password.config(justify='center', font=("Arial", 15, 'bold'))
+    
+    send_button = ttk.Button(maintopframe, text="Aktualizuj hasło", style='my.TButton', command=lambda emp_id=emp_id, wnd=wnd: Reset_Password(emp_id, user_password.get(), wnd))
+    send_button.pack(pady=30, ipady=10, ipadx=10)
+
 
 def Month_to_String(month):
     month = int(month)

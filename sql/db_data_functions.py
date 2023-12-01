@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from tkinter import *
 from tkinter import messagebox
 import re
+import hashlib
 
 actual_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 free_days = Create_Free_days()
@@ -351,6 +352,13 @@ def Get_Emps_Overtime(emp_list):
         new_emp_list.append((item[0], item[1], item[2], item[3], item[4], output[0], output[1], item[5]))
     return new_emp_list
 
+def Get_Users_List():
+    sql_query = "SELECT id, login, uprawnienia, departments, rm_emp, add_emp, rm_ent, add_ent, id_baza, tl FROM konta"
+    get_sql = conn.cursor()
+    get_sql.execute(sql_query)
+    output = get_sql.fetchall()
+    return output
+
 def Get_Emps_Overtime_Single(emp_list):
     i = 0
     new_emp_list = []
@@ -388,3 +396,61 @@ def Send_Overtime(emp_id, overtime, ent_id, wnd, rights_dict):
     conn.commit()
     wnd.destroy()
     messagebox.showinfo(title="Sukces", message="Pomyślnie zaktualizowano nadgodziny")
+    
+def Edit_User_Data(emp_id, emp_admin, emp_tl, rem_emp, add_emp, rem_ent, add_ent, selection_list, wnd, dep_dict, user_login=0, id_database=0):
+    
+    dep_string = ""
+    for item in selection_list:
+        dep_string = dep_string + str(list(dep_dict.keys())[list(dep_dict.values()).index(item)]) + ","
+    dep_string = dep_string[:-1]
+    
+    if emp_admin == "TAK":
+        emp_admin = '777'
+    else:
+        emp_admin = "0"
+        
+    def YesToNumber(yesno):
+        if yesno == "TAK":
+            return 1
+        else:
+            return 0
+        
+    sql_query = "SELECT id FROM _team WHERE teamleader = '%s'" % emp_tl
+    get_sql = conn.cursor()
+    get_sql.execute(sql_query)
+    
+    emp_tl = get_sql.fetchall()[0][0]
+    if user_login == 0:
+        sql_query = "UPDATE konta SET uprawnienia = %s, departments = '%s', rm_emp = %s, add_emp = %s, rm_ent = %s, add_ent = %s, tl = %s WHERE id = %s" % (emp_admin, dep_string, YesToNumber(rem_emp), YesToNumber(add_emp), YesToNumber(rem_ent), YesToNumber(add_ent), emp_tl, emp_id)
+        update_sql = conn.cursor()
+        update_sql.execute(sql_query)
+        conn.commit()
+        wnd.destroy()
+        messagebox.showinfo(title="Sukces", message="Pomyślnie edytowano użytkownika")
+    else:
+        try:
+            id_database = int(id_database)
+            sql_query = "INSERT INTO konta (login, haslo, uprawnienia, departments, rm_emp, add_emp, rm_ent, add_ent, id_baza, tl) VALUES ('%s', 'asddsa', %s, '%s', %s, %s, %s, %s, %s, %s)" % (user_login, emp_admin, dep_string, YesToNumber(rem_emp), YesToNumber(add_emp), YesToNumber(rem_ent), YesToNumber(add_ent), id_database, emp_tl)
+            update_sql = conn.cursor()
+            update_sql.execute(sql_query)
+            conn.commit()
+            wnd.destroy()
+            messagebox.showinfo(title="Sukces", message="Pomyślnie dodano użytkownika")
+        except:
+            messagebox.showwarning(title="ID BAZA", message="ID użytkownika w bazie musi być numerem")
+            
+def Remove_DB_User(emp_id):
+    sql_query = "DELETE FROM konta WHERE id = %s" % emp_id
+    update_sql = conn.cursor()
+    update_sql.execute(sql_query)
+    conn.commit()
+    messagebox.showinfo(title="Sukces", message="Usunięto użytkownika %s z bazy danych" % emp_id)
+    
+def Reset_Password(emp_id, password, wnd):
+    hashed = hashlib.sha256(password.encode()).hexdigest()
+    sql_query = "UPDATE konta SET haslo = '%s' WHERE id = %s" % (hashed, emp_id)
+    update_sql = conn.cursor()
+    update_sql.execute(sql_query)
+    conn.commit()
+    wnd.destroy()
+    messagebox.showinfo(title="Sukces", message="Pomyślnie zresetowano hasło")

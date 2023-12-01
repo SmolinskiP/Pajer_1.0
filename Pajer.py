@@ -11,8 +11,8 @@ from datetime import date, datetime
 
 #import local modules
 from login_form.login_form import *
-from sql.db_data_functions import Create_Dict, Create_Emp_Dict, SQL_Connect, Get_Emp_Occurance, Get_Emp_List, Activate_Employee, Get_Emps_By_Department, Get_Emps_Overtime, Get_Emps_By_Id, Get_Emps_Overtime_Single
-from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_EntryExit, Add_Holiday, Add_Random_Entry, Change_Connection_Params, Edit_Employee, Remove_Employee, Changelog, Update_App, Add_Comment, Add_Employee, ToDo, Edit_Employee_Overtime, Month_to_String
+from sql.db_data_functions import Create_Dict, Create_Emp_Dict, SQL_Connect, Get_Emp_Occurance, Get_Emp_List, Activate_Employee, Get_Emps_By_Department, Get_Emps_Overtime, Get_Emps_By_Id, Get_Emps_Overtime_Single, Get_Users_List
+from windows.rm_entry import Remove_Entry, Add_Break, Change_Password, Add_EntryExit, Add_Holiday, Add_Random_Entry, Change_Connection_Params, Edit_Employee, Remove_Employee, Changelog, Update_App, Add_Comment, Add_Employee, ToDo, Edit_Employee_Overtime, Month_to_String, Edit_User, Remove_User, Reset_User_Password
 from fnct.iseven import isEven
 from fnct.getpath import Get_Local_Path
 from sql.db_connect import *
@@ -342,7 +342,196 @@ def Create_Table_Presence(id, fname, lname, date_from, date_to):
         middle_screen.update()
         middle_screen_panel.update()
         middle_screen.config(scrollregion=middle_screen.bbox("all"))
+        
+def Create_Table_Admin():
+    
+    Clear(middle_screen_panel)
+    users_list = Get_Users_List()
+    fgfont=('Arial', 10, 'bold')
+    i = 1
+    dict_firma = {}
+    dict_firma["frame0"] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+    dict_firma["frame0"].pack(anchor=NW, fill=X)
+    e_lp = ttk.Entry(dict_firma["frame0"], width=4)
+    e_lp.pack(side=LEFT)
+    e_lp.insert(END, "LP")
+    e_lp.config(state='disabled', justify='center', font=fgfont)
+    e_id = ttk.Entry(dict_firma["frame0"], width=4)
+    e_id.pack(side=LEFT)
+    e_id.insert(END, "ID")
+    e_id.config(state='disabled', justify='center', font=fgfont)
+    e_fn = ttk.Entry(dict_firma["frame0"], width=13)
+    e_fn.pack(side=LEFT)
+    e_fn.insert(END, "Login")
+    e_fn.config(state='disabled', justify='center', font=fgfont)
+    e_ln = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ln.pack(side=LEFT)
+    e_ln.insert(END, "Admin")
+    e_ln.config(state='disabled', justify='center', font=fgfont)
+    e_dp = ttk.Entry(dict_firma["frame0"], width=15)
+    e_dp.pack(side=LEFT)
+    e_dp.insert(END, "Działy")
+    e_dp.config(state='disabled', justify='center', font=fgfont)
+    e_re = ttk.Entry(dict_firma["frame0"], width=13)
+    e_re.pack(side=LEFT)
+    e_re.insert(END, "Usuń pracownika")
+    e_re.config(state='disabled', justify='center', font=fgfont)
+    e_ae = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ae.pack(side=LEFT)
+    e_ae.insert(END, "Dodaj pracownika")
+    e_ae.config(state='disabled', justify='center', font=fgfont)
+    e_rn = ttk.Entry(dict_firma["frame0"], width=13)
+    e_rn.pack(side=LEFT)
+    e_rn.insert(END, "Usuń wpis")
+    e_rn.config(state='disabled', justify='center', font=fgfont)
+    e_an = ttk.Entry(dict_firma["frame0"], width=13)
+    e_an.pack(side=LEFT)
+    e_an.insert(END, "Dodaj wpis")
+    e_an.config(state='disabled', justify='center', font=fgfont)
+    e_ib = ttk.Entry(dict_firma["frame0"], width=13)
+    e_ib.pack(side=LEFT)
+    e_ib.insert(END, "ID baza")
+    e_ib.config(state='disabled', justify='center', font=fgfont)
+    e_tl = ttk.Entry(dict_firma["frame0"], width=13)
+    e_tl.pack(side=LEFT)
+    e_tl.insert(END, "Teamleader")
+    e_tl.config(state='disabled', justify='center', font=fgfont)
+    
+    for event in users_list:
+        if isEven(i) == True:
+            fgcolor = 'blue'
+        else:
+            fgcolor = 'darkblue'
+        key = str("frame" + str(i))
+        dict_firma[key] = Frame(middle_screen_panel, highlightbackground="black", highlightthickness=0.5)
+        dict_firma[key].pack(anchor=N, fill=X)
+        e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+        e.pack(side=LEFT)
+        e.insert(END, str(i))
+        e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+        
+        for j in range(len(event)):
+            if j == 0:
+                key = "emp_id" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=4)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 1:
+                key = "emp_login" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 2:
+                key = "emp_admin" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                if dict_firma[key].get() == '777':
+                    e.insert(END, "TAK")
+                else:
+                    e.insert(END, "NIE")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 3:
+                key = "emp_deps" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                dep_list_emp = []
+                dep_list_numbers = dict_firma[key].get().split(",")
+                for item in dep_list_numbers:
+                    try:
+                        item = int(item)
+                        dep_list_emp.append(dep_dict[item])
+                    except:
+                        continue
+                value_inside = StringVar()
+                value_inside.set("Lista działów") 
+                e = OptionMenu(dict_firma["frame" + str(i)], value_inside, *dep_list_emp)
+                e.pack(side=LEFT)
+            elif j == 4:
+                key = "emp_rem_emp" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                if dict_firma[key].get() == '1':
+                    e.insert(END, "TAK")
+                else:
+                    e.insert(END, "NIE")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 5:
+                key = "emp_add_emp" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                if dict_firma[key].get() == '1':
+                    e.insert(END, "TAK")
+                else:
+                    e.insert(END, "NIE")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 6:
+                key = "emp_rem_ent" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                if dict_firma[key].get() == '1':
+                    e.insert(END, "TAK")
+                else:
+                    e.insert(END, "NIE")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 7:
+                key = "emp_add_ent" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                if dict_firma[key].get() == '1':
+                    e.insert(END, "TAK")
+                else:
+                    e.insert(END, "NIE")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 8:
+                key = "emp_id_db" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                e.insert(END, dict_firma[key].get())
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+            elif j == 9:
+                key = "emp_tl" + str(i)
+                dict_firma[key] = StringVar(middle_screen_panel)
+                dict_firma[key].set(event[j])
+                e = ttk.Entry(dict_firma["frame" + str(i)], width=13)
+                e.pack(side=LEFT)
+                try:
+                    e.insert(END, tl_dict[dict_firma[key].get()])
+                except:
+                    e.insert(END, "ND")
+                e.config(state='disabled', justify='center', font=fgfont, foreground=fgcolor)
+                edit_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Edytuj", command=lambda dep_list = dep_list, dep_dict = dep_dict, emp_id = dict_firma["emp_id" + str(i)].get(), emp_login = dict_firma["emp_login" + str(i)].get(), emp_admin = dict_firma["emp_admin" + str(i)].get(), emp_deps = dict_firma["emp_deps" + str(i)].get(), emp_rem_emp = dict_firma["emp_rem_emp" + str(i)].get(), emp_add_emp = dict_firma["emp_add_emp" + str(i)].get(), emp_rem_ent = dict_firma["emp_rem_ent" + str(i)].get(), emp_add_ent = dict_firma["emp_add_ent" + str(i)].get(), emp_id_db = dict_firma["emp_id_db" + str(i)].get(), emp_tl = dict_firma["emp_tl" + str(i)].get(): Edit_User(emp_id, emp_login, emp_admin, emp_deps, emp_rem_emp, emp_add_emp, emp_rem_ent, emp_add_ent, emp_id_db, emp_tl, dep_list, dep_dict))
+                edit_btn.pack(side=LEFT)
+                reset_pwd_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Zresetuj hasło", command=lambda emp_id = dict_firma["emp_id" + str(i)].get(): Reset_User_Password(emp_id))
+                reset_pwd_btn.pack(side=LEFT)
+                remove_user_btn = ttk.Button(dict_firma["frame" + str(i)], text = "Usuń użytkownika", command=lambda emp_id = dict_firma["emp_id" + str(i)].get(): Remove_User(emp_id))
+                remove_user_btn.pack(side=LEFT)
+        i+=1
 
+    middle_screen.coords(middle_screen_id, middle_screen.winfo_width()/2, 0)
+    main_window.update()
+    middle_screen.update()
+    middle_screen_panel.update()
+    middle_screen.config(scrollregion=middle_screen.bbox("all"))
+
+    
 def Create_Table_Overtime_Emp(emp_id):
     
     Clear(middle_screen_panel)
@@ -1031,6 +1220,12 @@ def Create_Menu():
         excel_menu.add_command(label="PŁOŃSK", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=1), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
         excel_menu.add_command(label="WARSZAWA", command=lambda conn=conn: Create_Presence_Excel(Create_Presence_Dict(connection_dict, conn, int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), localization=2), int(Get_Date_From_Callendar(cal_from)[:4]), int(Get_Date_From_Callendar(cal_from)[5:7]), smk_dict, action_dict, dep_dict, company_dict, city_dict, agr_dict, pos_dict))
     menubar.add_cascade(label="Excel", menu=excel_menu)
+
+    if rights_dict['uprawnienia'] == 777:
+        admin_menu = Menu(menubar, tearoff=0)
+        admin_menu.add_command(label="Lista użytkowników", command=lambda: Create_Table_Admin())
+        admin_menu.add_command(label="Dodaj użytkownika", command=lambda dep_list = dep_list, dep_dict = dep_dict, emp_id = 0, emp_login = 0, emp_admin = 0, emp_deps = 0, emp_rem_emp = 0, emp_add_emp = 0, emp_rem_ent = 0, emp_add_ent = 0, emp_id_db = 0, emp_tl = 5: Edit_User(emp_id, emp_login, emp_admin, emp_deps, emp_rem_emp, emp_add_emp, emp_rem_ent, emp_add_ent, emp_id_db, emp_tl, dep_list, dep_dict, state=1))
+        menubar.add_cascade(label="Admin", menu=admin_menu)
 
     help_menu = Menu(menubar, tearoff=0)
     help_menu.add_command(label="Changelog", command=lambda: Changelog())

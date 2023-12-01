@@ -15,7 +15,7 @@ print("as")
 global rights_dict
 rights_dict = {}
 global version
-version = '1.2.9'
+version = '1.3.0'
 
 def refresh(self):
     self.destroy()
