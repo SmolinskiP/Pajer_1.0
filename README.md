@@ -31,7 +31,9 @@ conn3 = database.connect(
         )
 ```
 Run with:
-1. startbat.vbs![ezgif-3-6050b7ae5d](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/7f74d316-bae9-4548-8623-1a27403bd523)
+1. startbat.vbs
+
+   ![image](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/7f74d316-bae9-4548-8623-1a27403bd523)
 
 2. ```python readrs.py```<br /><br />
 There is also a function to turn on the computer for an employee who logs in, but this already requires changes in the database which I will not discuss here<br />
