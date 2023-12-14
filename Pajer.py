@@ -5,7 +5,6 @@ from tkinter import messagebox
 from time import sleep
 #import helping modules
 import requests, os, re
-import mysql.connector
 import mysql.connector as database
 from datetime import date, datetime
 
@@ -31,9 +30,17 @@ try:
 except Exception as e:
     home_directory = os.path.expanduser('~')
     home_directory = os.path.join(home_directory, "Documents", "PajerApp")
+    #os.path.join(os.path.expanduser('~'), "Documents", "PajerApp")
     try:
-        params_file_path = Get_Local_Path() + "\\sql\\params.txt"
+        local_path_1 = Get_Local_Path()
+        params_file_path = local_path_1 + "\\sql\\params.txt"
+        favicon_1 = local_path_1 + "\\img\\favicon.ico"
+        logo1 = local_path_1 + "\\img\\logo.png"
+        logo2 = local_path_1 + "\\img\\logo2.png"
         os.system('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
+        os.system('copy "%s" "%s"' % (favicon_1, home_directory + "\\"))
+        os.system('copy "%s" "%s"' % (logo1, home_directory + "\\"))
+        os.system('copy "%s" "%s"' % (logo2, home_directory + "\\"))
         print('copy "%s" "%s"' % (params_file_path, home_directory + "\\"))
         firstrun_check_file = open(home_directory + "\\params.txt", 'r')
         db_params = firstrun_check_file.readlines()
@@ -53,7 +60,7 @@ except Exception as e:
         if firstrun:
             wnd = Toplevel()
             wnd.resizable(False, False)
-            wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+            wnd.iconbitmap(os.path.join(home_directory, "Documents", "PajerApp") + "\\favicon.ico")
             wnd.title("Baza")
             wnd.lift()
             wnd.attributes("-topmost", True)
@@ -1139,7 +1146,7 @@ try:
         update_button = ttk.Button(right_panel, text='Dostępne aktualizacje!', style='my.TButton', command=lambda main_wnd=main_window, version=version, update_version=update_version: Update_App(main_wnd, version, update_version))
         update_button.pack(side=BOTTOM, pady=30, padx=60, fill=BOTH, expand=True)
     else:
-        imgpath_pda = current_directory + "\img\logo.png"
+        imgpath_pda = os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\logo.png"
         logo_pda = PhotoImage(file=imgpath_pda)
         actualization_label = Label(right_panel, image = logo_pda)
         actualization_label.pack(fill=X, pady=50)

@@ -5,14 +5,23 @@ import os
 home_directory = os.path.expanduser('~')
 home_directory = os.path.join(home_directory, "Documents", "PajerApp")
 pajer_dbfile = os.path.join(home_directory, "params.txt")
+favicon_imgfile = os.path.join(home_directory, "favicon.ico")
 
 if os.path.exists(home_directory) == False:
     os.system('mkdir %s' % home_directory)
 
-filepath = Get_Local_Path() + "\\sql\\params.txt"
+local_path_app = Get_Local_Path()
+filepath = local_path_app + "\\sql\\params.txt"
 
 if os.path.isfile(pajer_dbfile) == False:
     os.system('copy "%s" "%s"' % (filepath, home_directory))
+if os.path.isfile(favicon_imgfile) == False:
+    favicon_1 = local_path_app + "\\img\\favicon.ico"
+    logo1 = local_path_app + "\\img\\logo.png"
+    logo2 = local_path_app + "\\img\\logo2.png"
+    os.system('copy "%s" "%s"' % (favicon_1, home_directory + "\\"))
+    os.system('copy "%s" "%s"' % (logo1, home_directory + "\\"))
+    os.system('copy "%s" "%s"' % (logo2, home_directory + "\\"))
 
 try:
     db_file = open(pajer_dbfile, 'r')

@@ -41,7 +41,7 @@ def Change_Connection_Params():
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Baza")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -123,7 +123,7 @@ def Remove_Entry(entry_id, frame, uname):
 def Add_Break(selected_emp, employee_id, uname):
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Przerwa")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -190,7 +190,7 @@ def Change_Password(uname):
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Hasło")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -233,7 +233,7 @@ def Change_Password(uname):
 def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Wejście/Wyjście")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -313,7 +313,7 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
 def Add_Holiday(selected_emp, employee_id, uname, date_from, date_to):
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Urlop")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -394,7 +394,7 @@ def Add_Random_Entry(selected_emp, employee_id, uname):
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Wpis")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -498,7 +498,7 @@ def Edit_Employee(emp_id, uname):
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Edytuj pracownika")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -622,7 +622,7 @@ def Add_Employee(uname):
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Dodaj pracownika")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -744,7 +744,7 @@ def Update_App(main_wnd, version, update_version):
         return
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Pobieranie")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -789,7 +789,7 @@ def Add_Comment(selected_emp, emp_id, uname):
 
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Komentarz")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -822,7 +822,7 @@ def Add_Comment(selected_emp, emp_id, uname):
 def ToDo():
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("About")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -841,7 +841,7 @@ def ToDo():
 def Edit_Employee_Overtime(emp_id, ent_id, rights_dict):
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("About")
     wnd.lift()
     wnd.attributes("-topmost", True)
@@ -874,7 +874,7 @@ def Edit_User(emp_id, emp_login, emp_admin, emp_deps, emp_rem_emp, emp_add_emp, 
         
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     if state == 0:
         wnd.title("Edycja użytkowników")
     else:
@@ -1007,7 +1007,7 @@ def Remove_User(emp_id):
 def Reset_User_Password(emp_id):
     wnd = Toplevel()
     wnd.resizable(False, False)
-    wnd.iconbitmap(current_directory + "\img\\favicon.ico")
+    wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
     wnd.title("Resetowanie hasła")
     wnd.lift()
     wnd.attributes("-topmost", True)

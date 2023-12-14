@@ -11,7 +11,6 @@ from PIL import Image, ImageTk
 import os
 
 current_directory = Get_Local_Path()
-print("as")
 global rights_dict
 rights_dict = {}
 global version
@@ -109,10 +108,10 @@ def login_form():
     except:
         login_screen = Toplevel()
         login_screen.resizable(False, False)
-        login_screen.iconbitmap(current_directory + "\img\\favicon.ico")
+        login_screen.iconbitmap(home_directory + "\\favicon.ico")
         login_screen.title("Logowanie")
         login_screen.geometry("320x332")
-        imgpath = current_directory + "\img\logo2.png"
+        imgpath = home_directory + "\\logo2.png"
         logo = PhotoImage(file=imgpath)
 
         try:
@@ -166,6 +165,6 @@ def login_form():
 
 
 main_window = Tk()
-main_window.iconbitmap(current_directory + "\img\\favicon.ico")
+main_window.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
 main_window.title("PaJer v%s - System Rejestracji Czasu Pracy" % version)
 main_window.state('zoomed')
