@@ -1,5 +1,7 @@
 # Pajer_1.0
 
+![image](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/3e6ae949-02a2-44e2-b387-84bf9a701654)
+
 ![image](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/ec2d897e-ff28-47b5-88cd-755bf95b0a63)
 
 Requirements:
