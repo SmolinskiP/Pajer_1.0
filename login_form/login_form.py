@@ -14,7 +14,7 @@ current_directory = Get_Local_Path()
 global rights_dict
 rights_dict = {}
 global version
-version = '1.3.4'
+version = '1.3.6'
 
 def refresh(self):
     self.destroy()
@@ -117,6 +117,8 @@ def login_form():
         try:
             myfile = open(pajer_file,"r")
             savedlogin = myfile.read()
+            if savedlogin == "kasia":
+                savedpassword = "qazxc"
             myfile.close()
         except:
             pass
@@ -131,6 +133,10 @@ def login_form():
         
         try:
             username.set(savedlogin)
+        except:
+            pass
+        try:
+            password.set(savedpassword)
         except:
             pass
 

@@ -180,35 +180,96 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
         total_total_hours = 0
         entry_dict = {}
         exit_dict = {}
+        
+#____________________________________________RTL
+        entries_list = []
+        exits_list = []
+        for entry in value[8]:
+            if entry[1] == 1:
+                entries_list.append(entry[2])
+            if entry[1] == 2:
+                exits_list.append(entry[2])
+        
+        dict_entry_exit = {}
+        for exit_ in exits_list:
+            for entry_ in entries_list:
+                if entry_ < exit_:
+                    dict_entry_exit[exit_] = entry_
+                    #DEBUG dict_entry_exit[exit_.strftime("%Y-%m-%d %H:%M:%S")] = entry_.strftime("%Y-%m-%d %H:%M:%S")
+#____________________________________________RTL
+        for key in dict_entry_exit:
+            entries_list.remove(dict_entry_exit[key])
+            
+        print(entries_list)
+
+            
+        #print(entries_list)
+        
         while i <= days_in_month:
             expected_time = Expected_Time(key)
             actual_date = "%s-%s-%s" % (year, Number_to_String(month), Number_to_String(i))
+            if Number_to_String(i-1) == 0:
+                if Number_to_String(month-1) == 0:
+                    previous_date = "%s-%s-%s" % (str(int(year)-1), Number_to_String(month), Number_to_String(i))
+                else:
+                    previous_date = "%s-%s-%s" % (year, Number_to_String(month-1), Number_to_String(i))
+            else:
+                previous_date = "%s-%s-%s" % (year, Number_to_String(month), Number_to_String(i-1))
+                
+            
             for item in value[8]:
                 if item[2].strftime("%Y-%m-%d") == actual_date:
                     if item[3] != None:
                         worksheet.write(i+9, 3, item[3])
-                    if item[1] == 1:
-                        entry_dict[actual_date] = item[2]
-                        worksheet.write(i+9, 1, entry_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(entry_dict[actual_date].strftime("%H")), int(entry_dict[actual_date].strftime("%M")), "entry")))
-                    elif item[1] == 2:
-                        exit_dict[actual_date] = item[2]
-                        worksheet.write(i+9, 2, exit_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(exit_dict[actual_date].strftime("%H")), int(exit_dict[actual_date].strftime("%M")), "exit")))
-                        
-                        total_time, total_hours = Generate_Overtime(key, agreement, entry_dict[actual_date], exit_dict[actual_date])
-                        total_total_time += total_time
-                        total_total_hours += total_hours
-                        #print("DODAJE %s nadgodzin poniewaz akcja to %s - data %s" % (total_total_hours, item[1], actual_date))
-                        
-                        if len(str(total_time)) == 7:
-                            total_time_for_cell_h = int(str(total_time)[:1])
-                            total_time_for_cell_m = int(str(total_time)[2:4])
-                        elif len(str(total_time)) == 8:
-                            total_time_for_cell_h = int(str(total_time)[:2])
-                            total_time_for_cell_m = int(str(total_time)[3:5])
+                    #RTL
+                    if item[1] == 2:
+                        try:
+                            entry_dict[actual_date] = dict_entry_exit[item[2]]
+                            exit_dict[actual_date] = item[2]
                             
-                        worksheet.write(i+9, 4, str(total_time), Cell_Choose(Cell_Type_Entry_Exit(key, total_time_for_cell_h, total_time_for_cell_m, "total")))
-                        worksheet.write(i+9, 5, total_hours)
-                        worksheet.write(i+9, 6, expected_time)
+                            total_time, total_hours = Generate_Overtime(key, agreement, entry_dict[actual_date], exit_dict[actual_date])
+                            total_total_time += total_time
+                            total_total_hours += total_hours
+                            if len(str(total_time)) == 7:
+                                total_time_for_cell_h = int(str(total_time)[:1])
+                                total_time_for_cell_m = int(str(total_time)[2:4])
+                            elif len(str(total_time)) == 8:
+                                total_time_for_cell_h = int(str(total_time)[:2])
+                                total_time_for_cell_m = int(str(total_time)[3:5])
+                            if dict_entry_exit[item[2]].strftime("%Y-%m-%d") == actual_date:
+                                row_number_ = i+9
+                            else:
+                                row_number_ = i+8
+                            worksheet.write(row_number_, 1, entry_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(entry_dict[actual_date].strftime("%H")), int(entry_dict[actual_date].strftime("%M")), "entry")))
+                            worksheet.write(row_number_, 2, exit_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(exit_dict[actual_date].strftime("%H")), int(exit_dict[actual_date].strftime("%M")), "exit")))
+                            worksheet.write(row_number_, 4, str(total_time), Cell_Choose(Cell_Type_Entry_Exit(key, total_time_for_cell_h, total_time_for_cell_m, "total")))
+                            worksheet.write(row_number_, 5, total_hours)
+                            worksheet.write(row_number_, 6, expected_time)
+                        except:
+                            worksheet.write(i+9, 1, "ERROR FETCHING DATA")
+                    #PDA
+                    # if item[1] == 1:
+                    #     entry_dict[actual_date] = item[2]
+                    #     worksheet.write(i+9, 1, entry_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(entry_dict[actual_date].strftime("%H")), int(entry_dict[actual_date].strftime("%M")), "entry")))
+                    # elif item[1] == 2:
+                    #     exit_dict[actual_date] = item[2]
+                    #     worksheet.write(i+9, 2, exit_dict[actual_date].strftime("%H:%M:%S"), Cell_Choose(Cell_Type_Entry_Exit(key, int(exit_dict[actual_date].strftime("%H")), int(exit_dict[actual_date].strftime("%M")), "exit")))
+                        
+                    #     total_time, total_hours = Generate_Overtime(key, agreement, entry_dict[actual_date], exit_dict[actual_date])
+                    #     total_total_time += total_time
+                    #     total_total_hours += total_hours
+                        
+                    #     if len(str(total_time)) == 7:
+                    #         total_time_for_cell_h = int(str(total_time)[:1])
+                    #         total_time_for_cell_m = int(str(total_time)[2:4])
+                    #     elif len(str(total_time)) == 8:
+                    #         total_time_for_cell_h = int(str(total_time)[:2])
+                    #         total_time_for_cell_m = int(str(total_time)[3:5])
+                            
+                    #     worksheet.write(i+9, 4, str(total_time), Cell_Choose(Cell_Type_Entry_Exit(key, total_time_for_cell_h, total_time_for_cell_m, "total")))
+                    #     worksheet.write(i+9, 5, total_hours)
+                    #     worksheet.write(i+9, 6, expected_time)
+
                     elif item[1] == 3 or item[1] == 4:
                         continue
                     elif item[1] in (5, 7, 8, 10, 12, 13, 14, 15, 17, 18, 19, 22, 23, 24, 25, 26):
@@ -220,8 +281,13 @@ def Create_Presence_Excel(pres_dict, year, month, smk_dict, action_dict, dep_dic
                         #print("DODAJE %s nadgodzin poniewaz akcja to %s - data %s" % (total_total_hours, item[1], actual_date))
                         total_total_time += timedelta(hours=expected_time)
                     else:
-                        worksheet.write(i+9, 2, action_dict[item[1]], red_cell)
-                        worksheet.write(i+9, 6, expected_time)
+                        if item[1] == 1:
+                            if item[2] in entries_list:
+                                worksheet.write(i+9, 1, item[2].strftime("%H:%M:%S"))
+                                worksheet.write(i+9, 2, "Brak wyjścia")
+                        else:
+                            worksheet.write(i+9, 2, action_dict[item[1]], red_cell)
+                            worksheet.write(i+9, 6, expected_time)
                     
                     
                         

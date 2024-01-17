@@ -36,7 +36,7 @@ def Month_to_String(month):
     
 
 def Generate_Overtime(emp_id, emp_agreement, h_entry, h_exit):
-        
+    print("EMP -%s, Wejscie - %s Wyjscie -%s" % (emp_id, h_entry, h_exit))
     total_time = h_exit - h_entry
     hours = math.floor(total_time.total_seconds() / 3600)
     minutes = math.floor(total_time.total_seconds() % 3600 / 60)
