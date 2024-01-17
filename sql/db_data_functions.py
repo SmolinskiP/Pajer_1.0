@@ -245,8 +245,12 @@ def Add_Random_Entry_SQL(emp_id, ent_date, action, ent_time, uname, comment, wnd
     wnd.destroy()
     messagebox.showinfo(title="Sukces", message="Dodano wpis")
 
-def Edit_Emp_Data(emp_id, company, department, city, tl, agr, pos, smk, card, wnd):
-    sql_query = "UPDATE pracownicy SET firma = %s, dzial = %s, lokalizacja = %s, teamleader = %s, umowa = %s, stanowisko = %s, palacz = %s, karta = '%s' WHERE id = %s" % (company, department, city, tl, agr, pos, smk, card, emp_id)
+def Edit_Emp_Data(emp_id, company, department, city, tl, agr, pos, smk, card, wnd, emp_fname=None, emp_lname=None):
+    if emp_fname == None:
+        sql_query = "UPDATE pracownicy SET firma = %s, dzial = %s, lokalizacja = %s, teamleader = %s, umowa = %s, stanowisko = %s, palacz = %s, karta = '%s' WHERE id = %s" % (company, department, city, tl, agr, pos, smk, card, emp_id)
+    else:
+        sql_query = "UPDATE pracownicy SET imie = '%s', nazwisko = '%s', firma = %s, dzial = %s, lokalizacja = %s, teamleader = %s, umowa = %s, stanowisko = %s, palacz = %s, karta = '%s' WHERE id = %s" % (emp_fname, emp_lname, company, department, city, tl, agr, pos, smk, card, emp_id)
+        print(sql_query)
     try:
         int(card)
     except:

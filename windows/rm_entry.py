@@ -504,15 +504,23 @@ def Edit_Employee(emp_id, uname):
     wnd.attributes("-topmost", True)
 
     maintopframe = Frame(wnd)
+    maintopframe_left = Frame(maintopframe)
+    maintopframe_right = Frame(maintopframe)
     maindwnframe = Frame(wnd)
     topleftframe = Frame(maintopframe)
     toprightframe = Frame(maintopframe)
 
     maintopframe.pack(side=TOP, expand=True, fill="both")
-    entry_top = ttk.Entry(maintopframe)
-    entry_top.pack(side=TOP, padx=150, pady=30)
-    entry_top.insert(END, "%s %s" % (emp_data[0], emp_data[1]))
-    entry_top.config(state='disabled', justify='center', font=("Arial", 15, 'bold'))
+    maintopframe_left.pack(side=TOP, expand=True, fill="both")
+    entry_top_fname = ttk.Entry(maintopframe_left)
+    entry_top_fname.pack(side=TOP, padx=150, pady=30)
+    entry_top_fname.insert(END, "%s" % emp_data[0])
+    entry_top_fname.config(justify='center', font=("Arial", 15, 'bold'))
+    maintopframe_right.pack(side=TOP, expand=True, fill="both")
+    entry_top_lname = ttk.Entry(maintopframe_right)
+    entry_top_lname.pack(side=TOP, padx=150, pady=30)
+    entry_top_lname.insert(END, "%s" % emp_data[1])
+    entry_top_lname.config(justify='center', font=("Arial", 15, 'bold'))
     ttk.Separator(maintopframe, orient='horizontal').pack(fill='x', pady=15)
 
     maindwnframe.pack(side=TOP, expand=True, fill="both")
@@ -577,7 +585,7 @@ def Edit_Employee(emp_id, uname):
     entry_card.config(justify='center', font=("Arial", 13, 'bold'))
     ttk.Separator(toprightframe, orient='horizontal').pack(fill='x', pady=17)
 
-    send_button = ttk.Button(maindwnframe, text="Edytuj pracownika", style='my.TButton', command=lambda emp_id=emp_id, wnd=wnd: Edit_Emp_Data(emp_id, company_dict_rev[emp_company.get()], dep_dict_rev[emp_department.get()], city_dict_rev[emp_city.get()], tl_dict_rev[emp_tl.get()], agr_dict_rev[emp_agr.get()], pos_dict_rev[emp_pos.get()], smk_dict_rev[emp_smk.get()], entry_card.get(), wnd))
+    send_button = ttk.Button(maindwnframe, text="Edytuj pracownika", style='my.TButton', command=lambda emp_id=emp_id, wnd=wnd: Edit_Emp_Data(emp_id, company_dict_rev[emp_company.get()], dep_dict_rev[emp_department.get()], city_dict_rev[emp_city.get()], tl_dict_rev[emp_tl.get()], agr_dict_rev[emp_agr.get()], pos_dict_rev[emp_pos.get()], smk_dict_rev[emp_smk.get()], entry_card.get(), wnd, emp_fname=entry_top_fname.get(), emp_lname=entry_top_lname.get()))
     send_button.pack(pady=30, ipady=10, ipadx=10)
 
 def Add_Employee(uname):

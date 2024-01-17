@@ -1,5 +1,5 @@
-python C:\Users\szatan0802\AppData\Roaming\Python\Python311\Scripts\vba_extract.py D:\VisualStudio_Projects\Pajer\macro.xlsm
-pyinstaller --hidden-import "babel.numbers" --hidden-import "mysql.connector.locales.eng" --hidden-import "mysql.connector.locales.eng.client_error" pajer.py --noconfirm
+python C:\Users\szatan0802\AppData\Local\Programs\Python\Python312\Scripts\vba_extract.py D:\VisualStudio_Projects\Pajer\macro.xlsm
+pyinstaller --hidden-import "babel.numbers" --hidden-import "mysql.connector.locales.eng" --hidden-import "pytz.timezone" --hidden-import "mysql.connector.locales.eng.client_error" pajer.py --noconfirm
 mkdir D:\VisualStudio_Projects\Pajer\dist\pajer\sql
 mkdir D:\VisualStudio_Projects\Pajer\dist\pajer\img
 mkdir D:\VisualStudio_Projects\Pajer\dist\pajer\update_db

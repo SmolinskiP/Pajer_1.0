@@ -14,7 +14,7 @@ current_directory = Get_Local_Path()
 global rights_dict
 rights_dict = {}
 global version
-version = '1.3.0'
+version = '1.3.4'
 
 def refresh(self):
     self.destroy()
