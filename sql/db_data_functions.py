@@ -387,8 +387,23 @@ def Send_Overtime(emp_id, overtime, ent_id, wnd, rights_dict):
     try:
         int(overtime)
     except:
-        messagebox.showwarning("Błąd", "Ilość nadgodzin musi być liczbą")
-        return
+        try:
+            int(overtime[0])
+            int(overtime[2])
+            if overtime[1] != ".":
+                messagebox.showwarning("Błąd", "Ilość nadgodzin musi być liczbą w formacie X, X.X lub XX.X")
+                return
+        except:
+            try:
+                int(overtime[0])
+                int(overtime[1])
+                int(overtime[3])
+                if overtime[2] != ".":
+                    messagebox.showwarning("Błąd", "Ilość nadgodzin musi być liczbą w formacie X, X.X lub XX.X")
+                    return
+            except:
+                messagebox.showwarning("Błąd", "Ilość nadgodzin musi być liczbą w formacie X, X.X lub XX.X")
+                return
     if rights_dict['rm_emp'] == 0:
         messagebox.showwarning("Brak uprawnień", "Nie masz uprawnień do przeprowadzenia tej akcji\nSkontaktuj się z administratorem.")
         return
