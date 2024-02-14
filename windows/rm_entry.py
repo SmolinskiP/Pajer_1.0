@@ -9,7 +9,7 @@ import tkinter.ttk as ttk
 from fnct.getpath import Get_Local_Path
 from datetime import date, datetime
 from tkcalendar import Calendar
-from tktimepicker import AnalogPicker, AnalogThemes
+from tktimepicker import AnalogPicker, AnalogThemes, SpinTimePickerModern
 from tktimepicker import constants
 import hashlib, re, threading, wget, os, requests
 import webbrowser
@@ -120,7 +120,7 @@ def Remove_Entry(entry_id, frame, uname):
     else:
         print("Nie usuwam wpisu")
 
-def Add_Break(selected_emp, employee_id, uname):
+def Add_Break(selected_emp, employee_id, uname, cal_var_value=1):
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
@@ -135,6 +135,13 @@ def Add_Break(selected_emp, employee_id, uname):
     rightframe = Frame(midframe)
     dwnframe = Frame(wnd)
 
+    cal_var = IntVar()
+    cal_var.set(cal_var_value)
+    
+    def refresh(selected_emp, employee_id, uname, window, value):
+        window.destroy()
+        Add_Break(selected_emp, employee_id, uname, cal_var_value=value)
+
     topframe.pack(side=TOP, expand=True, fill="both")
     midframe.pack(side=TOP, expand=True, fill="both")
     leftframe.pack(side=LEFT, expand=True, fill="both")
@@ -146,18 +153,25 @@ def Add_Break(selected_emp, employee_id, uname):
     cal.selection_set(date(int(yearmonthday[0:4]),int(yearmonthday[5:7]),int(yearmonthday[8:10])))
 
     lbl_time = ttk.Label(topframe, text="Wybierz czas przerwy:", font=("Arial", 13, 'bold'))
+    c1 = Checkbutton(topframe, text='Pokaż zegar',variable=cal_var, onvalue=1, offvalue=0, command=lambda: refresh(selected_emp, employee_id, uname, wnd, cal_var.get()))
     lbl_time_fr = ttk.Label(leftframe, text="OD:", font=("Arial", 13, 'bold'))
     lbl_time_to = ttk.Label(rightframe, text="DO:", font=("Arial", 13, 'bold'))
 
-    time_picker_fr = AnalogPicker(leftframe, type=constants.HOURS24)
-    time_picker_fr.setHours(8)
-    time_picker_fr.setMinutes(1)
+    if cal_var.get() == 1:
+        time_picker_fr = AnalogPicker(leftframe, type=constants.HOURS24)
+        time_picker_fr.setHours(8)
+        time_picker_fr.setMinutes(1)
 
-    time_picker_to = AnalogPicker(rightframe, type=constants.HOURS24)
-    theme_to = AnalogThemes(time_picker_to)
-    theme_to.setDracula()
-    time_picker_to.setHours(15)
-    time_picker_to.setMinutes(59)
+        time_picker_to = AnalogPicker(rightframe, type=constants.HOURS24)
+        theme_to = AnalogThemes(time_picker_to)
+        theme_to.setDracula()
+        time_picker_to.setHours(15)
+        time_picker_to.setMinutes(59)
+    else:
+        time_picker_fr = SpinTimePickerModern(leftframe)
+        time_picker_fr.addAll(constants.HOURS24)
+        time_picker_to = SpinTimePickerModern(rightframe)
+        time_picker_to.addAll(constants.HOURS24)
 
     s = ttk.Style()
     s.configure('my.TButton', font=('Arial', 14, 'bold'), focusthickness=3, focuscolor='none')
@@ -172,6 +186,7 @@ def Add_Break(selected_emp, employee_id, uname):
     cal.pack(pady=5)
     ttk.Separator(topframe, orient='horizontal').pack(fill='x', pady=5)
     lbl_time.pack(pady=5)
+    c1.pack()
     lbl_time_fr.pack(pady=5)
     lbl_time_to.pack(pady=5)
     time_picker_fr.pack(expand=True, fill="both")
@@ -230,7 +245,7 @@ def Change_Password(uname):
     send_button = ttk.Button(wnd, text="Aktualizuj hasło", style='my.TButton', command=lambda uname=uname, act=act_pass: check(act, hashlib.sha256(old_pwd.get().encode()).hexdigest(), hashlib.sha256(new_pwd.get().encode()).hexdigest(), hashlib.sha256(new_pwd_confirm.get().encode()).hexdigest(), uname))
     send_button.pack(side=TOP, padx=30, pady=20, ipadx=5, ipady=5)
 
-def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
+def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to, cal_var_value=1):
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
@@ -247,6 +262,13 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     leftframe = Frame(midframe)
     rightframe = Frame(midframe)
     dwnframe = Frame(wnd)
+    
+    cal_var = IntVar()
+    cal_var.set(cal_var_value)
+    
+    def refresh(selected_emp, employee_id, uname, date_from, date_to, window, value):
+        window.destroy()
+        Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to, cal_var_value=value)
 
     topframe.pack(side=TOP, expand=True, fill="both")
     lbl_date = ttk.Label(topframe, text="Wybierz datę:", font=("Arial", 13, 'bold'))
@@ -271,18 +293,28 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     lbl_dt_to.pack(side=TOP, pady=5)
 
     lbl_time = ttk.Label(topframe, text="Wybierz czas:", font=("Arial", 13, 'bold'))
+
+    c1 = Checkbutton(topframe, text='Pokaż zegar',variable=cal_var, onvalue=1, offvalue=0, command=lambda: refresh(selected_emp, employee_id, uname, date_from, date_to, wnd, cal_var.get()))
+
     lbl_time_fr = ttk.Label(leftframe, text="Wejście:", font=("Arial", 13, 'bold'))
     lbl_time_to = ttk.Label(rightframe, text="Wyjście:", font=("Arial", 13, 'bold'))
 
-    time_picker_fr = AnalogPicker(leftframe, type=constants.HOURS24)
-    time_picker_fr.setHours(8)
-    time_picker_fr.setMinutes(0)
+    if cal_var.get() == 1:
+        time_picker_fr = AnalogPicker(leftframe, type=constants.HOURS24)
+        time_picker_fr.setHours(8)
+        time_picker_fr.setMinutes(0)
 
-    time_picker_to = AnalogPicker(rightframe, type=constants.HOURS24)
-    theme_to = AnalogThemes(time_picker_to)
-    theme_to.setDracula()
-    time_picker_to.setHours(16)
-    time_picker_to.setMinutes(0)
+        time_picker_to = AnalogPicker(rightframe, type=constants.HOURS24)
+        theme_to = AnalogThemes(time_picker_to)
+        theme_to.setDracula()
+        time_picker_to.setHours(16)
+        time_picker_to.setMinutes(0)
+        
+    else:
+        time_picker_fr = SpinTimePickerModern(leftframe)
+        time_picker_fr.addAll(constants.HOURS24)
+        time_picker_to = SpinTimePickerModern(rightframe)
+        time_picker_to.addAll(constants.HOURS24)
 
     s = ttk.Style()
     s.configure('my.TButton', font=('Arial', 14, 'bold'), focusthickness=3, focuscolor='none')
@@ -298,6 +330,7 @@ def Add_EntryExit(selected_emp, employee_id, uname, date_from, date_to):
     cal_to.pack(pady=5, padx=5)
     ttk.Separator(topframe, orient='horizontal').pack(fill='x', pady=5)
     lbl_time.pack(pady=5)
+    c1.pack()
     lbl_time_fr.pack(pady=5)
     lbl_time_to.pack(pady=5)
     time_picker_fr.pack(expand=True, fill="both")
@@ -388,10 +421,19 @@ def Add_Holiday(selected_emp, employee_id, uname, date_from, date_to):
     the_choosen_one = ttk.Entry(wnd, state= "disabled", font=("Arial", 13, 'bold'), justify='center', textvariable=selected_emp)
     the_choosen_one.pack(side=TOP, fill=BOTH, expan=False)
 
-def Add_Random_Entry(selected_emp, employee_id, uname):
+def Add_Random_Entry(selected_emp, employee_id, uname, cal_var_value=1):
+    
     today = date.today()
     yearmonthday = today.strftime("%Y-%m-%d")
 
+    cal_var = IntVar()
+    cal_var.set(cal_var_value)
+    
+    def refresh(selected_emp, employee_id, uname, window, value):
+        window.destroy()
+        Add_Random_Entry(selected_emp, employee_id, uname, cal_var_value=value)
+        
+    
     wnd = Toplevel()
     wnd.resizable(False, False)
     wnd.iconbitmap(os.path.join(os.path.expanduser('~'), "Documents", "PajerApp") + "\\favicon.ico")
@@ -415,10 +457,16 @@ def Add_Random_Entry(selected_emp, employee_id, uname):
     cal.selection_set(date(int(yearmonthday[0:4]),int(yearmonthday[5:7]),int(yearmonthday[8:10])))
 
     lbl_time = ttk.Label(topframe, text="Wybierz czas", font=("Arial", 13, 'bold'))
+    c1 = Checkbutton(topframe, text='Pokaż zegar',variable=cal_var, onvalue=1, offvalue=0, command=lambda: refresh(selected_emp, employee_id, uname, wnd, cal_var.get()))
 
-    time_picker = AnalogPicker(midframe, type=constants.HOURS24)
-    time_picker.setHours(8)
-    time_picker.setMinutes(0)
+    if cal_var.get() == 1:
+        time_picker = AnalogPicker(midframe, type=constants.HOURS24)
+        time_picker.setHours(8)
+        time_picker.setMinutes(0)
+    else:
+        time_picker = SpinTimePickerModern(midframe)
+        time_picker.addAll(constants.HOURS24)
+    
 
     action_lbl = ttk.Label(dwnframe, text="Wybierz rodzaj wpisu", font=("Arial", 11))
     s = ttk.Style()
@@ -443,6 +491,7 @@ def Add_Random_Entry(selected_emp, employee_id, uname):
     cal.pack(pady=5)
     ttk.Separator(topframe, orient='horizontal').pack(fill='x', pady=5)
     lbl_time.pack(pady=5)
+    c1.pack()
     time_picker.pack(expand=True, fill="both")
     ttk.Separator(dwnframe, orient='horizontal').pack(fill='x', pady=5)
     action_lbl.pack(pady=10)
