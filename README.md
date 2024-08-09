@@ -2,7 +2,7 @@
 # Pajer_1.0
 
 
-**Pajer_1.0** is a system designed for RCP (Rejestracja Czasu Pracy - Time Attendance System). It allows you to track employee attendance by using an RFID reader and a connected database. The system is adaptable for use on various operating systems with minimal modifications to the code.
+**Pajer_1.0** is a Time Attendance System. It allows you to track employee attendance by using an RFID reader and a connected database. The system is adaptable for use on various operating systems with minimal modifications to the code.
 
 ![image](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/3e6ae949-02a2-44e2-b387-84bf9a701654)
 
