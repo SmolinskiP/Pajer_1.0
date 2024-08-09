@@ -1,5 +1,5 @@
 
-Pajer_1.0
+# Pajer_1.0
 
 ![image](https://github.com/SmolinskiP/Pajer_1.0/assets/49648588/3e6ae949-02a2-44e2-b387-84bf9a701654)
 
@@ -53,55 +53,3 @@ The next step is to create tables in the database. We do this by running the mai
 When you have done all this, reset the application and log in with:
 
 - **login/password:** `admin / qwerty`
-
-
-
-# Pajer_1.0
-
-
-
-
-
-Requirements:
-
-1. UART USB Converter  (just an example, can by any)
-2. RFID Reader  (just an example, can by any with serial communication)
-3. Some cables to connect them:<br />
-
-4. RFID Cards
-5. Local / Remote Database (tested on MariaDB - 
-
-
-Copy the RCP folder to the device to which you have connected the reader<br />
-Change the "port" in readrs.py:
-```
-ser = serial.Serial(
-        port='COM7',
-        baudrate=9600,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS,
-        timeout=0.2,
-)
-```
-Change connection params in function "Insert_SQL_Remote":
-```
-conn3 = database.connect(
-        user="rcp",
-        password="STRONGPASSWORD",
-        host="XXX.XXX.XXX.XXX",
-        database="RFID"
-        )
-```
-Run with:
-1. startbat.vbs
-
-2. ```python readrs.py```<br /><br />
-There is also a function to turn on the computer for an employee who logs in, but this already requires changes in the database which I will not discuss here<br />
-Code was tested on Debian11 / Windows10. To change the system small changes in the code are required, currently the application is adapted to run on windows.<br />
-<br /><br />
-
-The next step is to create tables in the database. We do this by running the main database application. We do this either by installing it with an .exe file in releases or by cloning repo and running ```python Pajer.py``` The first run will ask us whether to create tables and to specify the connection parameters. NOTE. THE DATABASE ENGINE MUST BE INSTALLED BEFOREHAND!!! In case of problems, we create the database manually using the "DB.sql" file located in the application's main folder.<br /><br />
-
-When you have done all this, reset the application and log in with login/password: ```admin / qwerty```<br /><br />
-ENJOY!
